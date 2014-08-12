@@ -1,6 +1,10 @@
-from dancar import db
-from sqlalchemy import Column, Integer, String
+from flask import Flask
+from flask.ext.sqlalchemy import SQLAlchemy
 from geoalchemy2 import Geography
+from dancar import app
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/dancar'
+db = SQLAlchemy(app)
 
 class Device(db.Model):
     __tablename__ = 'device'
