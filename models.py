@@ -1,8 +1,9 @@
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from geoalchemy2 import Geography
-from dancar import app
+from sqlalchemy.ext.declarative import declarative_base
 
+app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/dancar'
 db = SQLAlchemy(app)
 
@@ -19,3 +20,6 @@ class Device(db.Model):
 
     def __repr__(self):
         return '<id %r>' % self.id
+
+    def set_location(self, lng, lat):
+        self.location = "POINT(%0.16f %0.16f)" % (float(lng), float(lat))

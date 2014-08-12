@@ -10,15 +10,13 @@ CREATE TABLE device (
 CREATE OR REPLACE FUNCTION update_device_table() RETURNS TRIGGER AS $$
 DECLARE
 BEGIN
-
 PERFORM pg_notify('device_updated', '{"id": ' 
     || CAST(NEW.id AS text) 
-    || ', "loc": '
-    || ST_AsGeoJSON(NEW.loc)
+    || ', "location": '
+    || ST_AsGeoJSON(NEW.location)
     || '}'
 );
 RETURN NEW;
-
 END;
 $$ LANGUAGE plpgsql;
 
@@ -28,3 +26,4 @@ DROP TRIGGER IF EXISTS device_update_notify ON device;
 CREATE TRIGGER device_update_notify AFTER UPDATE OR INSERT
     ON device FOR EACH ROW EXECUTE PROCEDURE update_device_table();
 
+INSERT INTO device (name) VALUES ('danh');
