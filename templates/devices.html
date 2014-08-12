@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block body %}
+  <ul class=devices>
+  {% for dev in devices %}
+    <li><h2>{{ dev.name }}</h2>{{ dev.location }}
+  {% else %}
+    <li><em>No devices</em>
+  {% endfor %}
+  </ul>
+{% endblock %}

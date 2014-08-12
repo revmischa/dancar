@@ -1,0 +1,14 @@
+Flask==0.10.1
+Flask-Migrate==1.2.0
+Flask-SQLAlchemy==1.0
+Flask-Script==2.0.5
+GeoAlchemy2==0.2.4
+Jinja2==2.7.3
+Mako==1.0.0
+MarkupSafe==0.23
+SQLAlchemy==0.9.7
+Werkzeug==0.9.6
+alembic==0.6.6
+itsdangerous==0.24
+psycopg2==2.5.3
+wsgiref==0.1.2

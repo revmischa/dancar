@@ -1,0 +1,8 @@
+CREATE EXTENSION postgis;
+
+DROP TABLE IF EXISTS devices;
+CREATE TABLE devices (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  location GEOGRAPHY
+);
