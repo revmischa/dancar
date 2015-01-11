@@ -1,15 +1,23 @@
 {% extends "layout.html" %}
+
 {% block body %}
 <script>
-    var h;
-    var pins = {};
-    var map;
-  
-    function log_it(stuff) {
-        $("#log").append(stuff+'<br/>');
-    }
- 
     $(function() {
+        var loc = window.location, wsUrl;
+        if (loc.protocol === "https:") {
+            wsUrl = "wss:";
+        } else {
+            wsUrl = "ws:";
+        }
+        wsUrl += "//" + loc.host + "/echo";
+
+        var ws = new WebSocket(wsUrl);
+        ws.onopen = function(evt) {
+            console.log(evt);
+        };
+
+        /*
+
         h = new Hippie(document.location.host, 'person_updated', function() {
             log_it("connected");
         },
@@ -53,7 +61,7 @@
         };
         map = new google.maps.Map(document.getElementById('map-canvas'),
         mapOptions);
-        
+        */
     });
 </script>
-{{ endblock }}
+{% endblock %}

@@ -27,14 +27,17 @@ def close_db(error):
 def hello():
     return "Hello World!"
 
-@app.route('/<name>')
-def hello_name(name):
-    return "Hello {}!".format(name)
-
 @app.route('/devices')
 def list_devices():
     devices=Device.query.all()
     return render_template('devices.html', devices=devices)
+
+@app.route('/device/<did>')
+def view_device(did):
+    device = Device.query.get(did)
+    if not device:
+        abort(404)
+    return render_template('map.html', device=device)
 
 @app.route('/device/<did>/update', methods=['POST'])
 def device_update(did):
@@ -47,6 +50,7 @@ def device_update(did):
     db.session.commit()
     return "Updated"
 
+@app.route('/echo')
 @sockets.route('/echo') 
 def echo_socket(ws): 
     while True: 
