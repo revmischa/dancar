@@ -8,5 +8,5 @@ update = {
 	'lat': lat,
 	'lng': lng
 }
-r = requests.post('http://localhost:5000/device/2/update', data=update)
+r = requests.post('http://localhost:5000/user/1/update', data=update)
 print r.text

@@ -1,68 +1,87 @@
 {% extends "layout.html" %}
 
+{% block head %}
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCyGGCtHnMtJITwVg8wiiLKqVSG3yhQyPU"></script>
+{% endblock %}
+
 {% block body %}
-<script>
-    $(function() {
-        var loc = window.location, wsUrl;
-        if (loc.protocol === "https:") {
-            wsUrl = "wss:";
-        } else {
-            wsUrl = "ws:";
-        }
-        wsUrl += "//" + loc.host + "/echo";
 
-        var ws = new WebSocket(wsUrl);
-        ws.onopen = function(evt) {
-            console.log(evt);
-            ws.send("yo what up");
-        };
+    <div id="map-canvas">Loading map...</div>
 
-        /*
-
-        h = new Hippie(document.location.host, 'person_updated', function() {
-            log_it("connected");
-        },
-        function() {
-            log_it("disconnected");
-        },
-        function(e) {
-            if (e.type == "ping") return;
+    <script>
+        $(function() {
+            var map;
             
-            if (e.loc) {
-                var coords = e.loc.coordinates;
-                console.log(coords);
-                var pos = new google.maps.LatLng(coords[1], coords[0]);
-                var pin = pins[e.id + ""];
-                if (! pin) {
-                    pin = new google.maps.Marker({
-                        'map': map,
-                        'position': pos,
-                        'draggable': false,
-                        'title': "Person id=" + e.id
-                    });
-                    pin.addListener("dragend", function(evt) {
-                        console.log(evt.latLng);
-                    });
-                    pins[e.id + ""] = pin;
-                } else {
-                    pin.setPosition(pos);   
-                }                
-                map.panTo(pos);
-                map.setZoom(15);
+            setupMap();
+            //registerLocationUpdatesPolling();
+
+            /////
+
+            function setupMap() {
+                var mapOptions = {
+                    zoom: 14,
+                    center: new google.maps.LatLng(37.88, -122.26),
+                    mapTypeId: google.maps.MapTypeId.HYBRID
+                };
+                map = new google.maps.Map(document.getElementById('map-canvas'),
+                mapOptions);
             }
+
+            // listen for updates with WebSocket
+            function registerLocationUpdatesWS() {
+                var loc = window.location, wsUrl;
+                if (loc.protocol === "https:") {
+                    wsUrl = "wss:";
+                } else {
+                    wsUrl = "ws:";
+                }
+                wsUrl += "//" + loc.host + "/echo";
+
+                var ws = new WebSocket(wsUrl);
+                ws.onopen = function(evt) {
+                    console.log(evt);
+                    ws.send("yo what up");
+                };            
+            }
+
+
+            /*
+
+                if (e.loc) {
+                    var coords = e.loc.coordinates;
+                    console.log(coords);
+                    var pos = new google.maps.LatLng(coords[1], coords[0]);
+                    var pin = pins[e.id + ""];
+                    if (! pin) {
+                        pin = new google.maps.Marker({
+                            'map': map,
+                            'position': pos,
+                            'draggable': false,
+                            'title': "Person id=" + e.id
+                        });
+                        pin.addListener("dragend", function(evt) {
+                            console.log(evt.latLng);
+                        });
+                        pins[e.id + ""] = pin;
+                    } else {
+                        pin.setPosition(pos);   
+                    }                
+                    map.panTo(pos);
+                    map.setZoom(15);
+                }
+                
+                log_it("got message: " + JSON.stringify(e));
+            } );
             
-            log_it("got message: " + JSON.stringify(e));
-        } );
-        
-        
-        var mapOptions = {
-            zoom: 14,
-            center: new google.maps.LatLng(37.88, -122.26),
-            mapTypeId: google.maps.MapTypeId.HYBRID
-        };
-        map = new google.maps.Map(document.getElementById('map-canvas'),
-        mapOptions);
-        */
-    });
-</script>
+            
+            var mapOptions = {
+                zoom: 14,
+                center: new google.maps.LatLng(37.88, -122.26),
+                mapTypeId: google.maps.MapTypeId.HYBRID
+            };
+            map = new google.maps.Map(document.getElementById('map-canvas'),
+            mapOptions);
+            */
+        });
+    </script>
 {% endblock %}
