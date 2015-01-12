@@ -7,13 +7,15 @@ GeoAlchemy2==0.2.4
 Jinja2==2.7.3
 Mako==1.0.0
 MarkupSafe==0.23
+SQLAlchemy==0.9.7
+Shapely==1.5.2
 Werkzeug==0.9.6
 alembic==0.6.6
 gevent==1.0.1
 gevent-websocket==0.9.3
 greenlet==0.4.3
+gunicorn==19.1.1
 itsdangerous==0.24
 psycopg2==2.5.3
 requests==2.3.0
 wsgiref==0.1.2
-gunicorn==19.1.1
