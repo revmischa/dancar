@@ -7,7 +7,6 @@ GeoAlchemy2==0.2.4
 Jinja2==2.7.3
 Mako==1.0.0
 MarkupSafe==0.23
-SQLAlchemy==0.9.7
 Werkzeug==0.9.6
 alembic==0.6.6
 gevent==1.0.1
