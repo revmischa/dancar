@@ -2,7 +2,7 @@ from flask import Flask
 from flask import Flask, request, session, g, redirect, url_for, abort, \
      render_template, flash
 import os
-from models import db, Device
+from models import db, User
 from flask_sockets import Sockets
 
 app = Flask(__name__)
@@ -27,30 +27,29 @@ def close_db(error):
 def hello():
     return "Hello World!"
 
-@app.route('/devices')
-def list_devices():
-    devices=Device.query.all()
-    return render_template('devices.html', devices=devices)
+@app.route('/user/list')
+def list_users():
+    users=User.query.all()
+    return render_template('users.html', users=users)
 
-@app.route('/device/<did>')
-def view_device(did):
-    device = Device.query.get(did)
-    if not device:
+@app.route('/user/<uid>')
+def view_user(uid):
+    user = User.query.get(did)
+    if not user:
         abort(404)
-    return render_template('map.html', device=device)
+    return render_template('map.html', user=user)
 
-@app.route('/device/<did>/update', methods=['POST'])
-def device_update(did):
+@app.route('/user/<did>/update', methods=['POST'])
+def user_update(did):
     lng = request.form['lng']
     lat = request.form['lat']
-    device = Device.query.get(did)
-    if not device:
+    user = User.query.get(did)
+    if not user:
         return "Does not exist"
-    device.set_location(lng, lat)
+    user.set_location(lng, lat)
     db.session.commit()
     return "Updated"
 
-@app.route('/echo')
 @sockets.route('/echo') 
 def echo_socket(ws): 
     while True: 

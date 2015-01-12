@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block body %}
+    <ul class="users">
+        {% for u in users %}
+            <li>
+                <h2>
+                    <a href="{{ url_for('view_user', uid=u.id) }}">{{ u.name }}</a>
+                </h2>
+                {{ u.location }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+

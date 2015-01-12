@@ -14,6 +14,7 @@
         var ws = new WebSocket(wsUrl);
         ws.onopen = function(evt) {
             console.log(evt);
+            ws.send("yo what up");
         };
 
         /*
