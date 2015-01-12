@@ -11,9 +11,10 @@
     <script>
         $(function() {
             var map;
-            
+            var markers = {};  // id => marker
+
             setupMap();
-            //registerLocationUpdatesPolling();
+            registerLocationUpdatesPolling();
 
             /////
 
@@ -25,6 +26,52 @@
                 };
                 map = new google.maps.Map(document.getElementById('map-canvas'),
                 mapOptions);
+            }
+
+            function updateMarker(user) {
+                if (! user) return;
+
+                var id = user.id;
+                var lng = user.lng;
+                var lat = user.lat;
+
+                if (! user || ! id || ! lng || ! lat) return;
+                    var marker = markers[id + ""];
+                    var pos = new google.maps.LatLng(lat, lng);
+
+                    if (marker) {
+                        marker.setPosition(pos);
+                    } else {
+                        // create new marker
+                        marker = new google.maps.Marker({
+                            'map': map,
+                            'position': pos,
+                            'draggable': false,
+                            'title': user.name
+                        });
+                        markers[id + ""] = marker;
+
+                        var $win = $("<div/>");
+                        $win.append($("<div/>").text(user.name));
+                        $win.append($("<div/>").text(user.updated_location));
+                        var win = new google.maps.InfoWindow({
+                            'content': $win.get(0)
+                        });
+                        win.open(map, marker);
+                    }
+                         
+                    map.panTo(pos);
+                    map.setZoom(18);
+            }
+
+            function registerLocationUpdatesPolling() {
+                window.setInterval(updateLocationPoll, 1000);
+            }
+
+            function updateLocationPoll() {
+                $.get('/api/user/{{ user.id }}', function(res) {
+                    updateMarker(res);
+                });
             }
 
             // listen for updates with WebSocket
@@ -47,28 +94,6 @@
 
             /*
 
-                if (e.loc) {
-                    var coords = e.loc.coordinates;
-                    console.log(coords);
-                    var pos = new google.maps.LatLng(coords[1], coords[0]);
-                    var pin = pins[e.id + ""];
-                    if (! pin) {
-                        pin = new google.maps.Marker({
-                            'map': map,
-                            'position': pos,
-                            'draggable': false,
-                            'title': "Person id=" + e.id
-                        });
-                        pin.addListener("dragend", function(evt) {
-                            console.log(evt.latLng);
-                        });
-                        pins[e.id + ""] = pin;
-                    } else {
-                        pin.setPosition(pos);   
-                    }                
-                    map.panTo(pos);
-                    map.setZoom(15);
-                }
                 
                 log_it("got message: " + JSON.stringify(e));
             } );

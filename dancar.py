@@ -1,6 +1,6 @@
 from flask import Flask
 from flask import Flask, request, session, g, redirect, url_for, abort, \
-     render_template, flash
+     render_template, flash, jsonify
 import os
 from models import db, User
 from flask_sockets import Sockets
@@ -49,6 +49,20 @@ def user_update(uid):
     user.set_location(lng, lat)
     db.session.commit()
     return "Updated"
+
+@app.route('/api/user/<uid>', methods=['GET'])
+def api_user(uid):
+    user = User.query.get(uid)
+    if not user:
+        return "Does not exist"
+    return jsonify(
+        id=uid,
+        name=user.name,
+        lng=user.get_lng(),
+        lat=user.get_lat(),
+        updated_location=user.updated_location
+    )
+
 
 @sockets.route('/echo') 
 def echo_socket(ws): 

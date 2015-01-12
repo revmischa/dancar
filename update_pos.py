@@ -1,8 +1,8 @@
 import requests
 import random
 
-lat = -122.25874046835327 + (random.random()-0.5)/100000;
-lng = 37.87556521891249 + (random.random()-0.5)/100000;
+lng = -122.25874046835327 + (random.random()-0.5)/100;
+lat = 37.87556521891249 + (random.random()-0.5)/100;
 
 update = {
 	'lat': lat,
