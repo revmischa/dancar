@@ -1,25 +1,15 @@
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash, jsonify
 import os
-from models import db, User
 from flask_sockets import Sockets
+from flask.ext.sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-sockets = Sockets(app)
+app.config.from_object('config.DevelopmentConfig')
 
-app.config.update(dict(
-    DEBUG=True,
-    SECRET_KEY='development key',
-))
+#sockets = Sockets(app)
+db = SQLAlchemy(app)
 
-def get_db():
-    if not hasattr(g, 'pg_db'):
-        g.pg_db = connect_db()
-    return g.pg_db
-
-@app.teardown_appcontext
-def close_db(error):
-    if hasattr(g, 'pg_db'):
-        g.pg_db.close()
+from models import *
 
 @app.route('/')
 def index():
@@ -27,7 +17,7 @@ def index():
 
 @app.route('/user/list')
 def user_list():
-    users=User.query.all()
+    users = User.query.all()
     return render_template('users.html', users=users)
 
 @app.route('/user/<uid>')
@@ -60,11 +50,11 @@ def api_user(uid):
     return jsonify(**ret)
 
 
-@sockets.route('/echo') 
-def echo_socket(ws): 
-    while True: 
-        message = ws.receive() 
-        ws.send(message)
+# @sockets.route('/echo') 
+# def echo_socket(ws): 
+#     while True: 
+#         message = ws.receive() 
+#         ws.send(message)
 
 if __name__ == '__main__':
     app.run()

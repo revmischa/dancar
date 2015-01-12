@@ -1,13 +1,9 @@
-from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from geoalchemy2 import Geography
 from geoalchemy2.functions import ST_X, ST_Y
 from geoalchemy2.shape import to_shape
 from sqlalchemy.ext.declarative import declarative_base
-
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/dancar'
-db = SQLAlchemy(app)
+from dancar import db
 
 class User(db.Model):
     __tablename__ = 'user'
@@ -22,7 +18,7 @@ class User(db.Model):
         self.location = location
 
     def __repr__(self):
-        return '<id %r>' % self.id
+        return '<user id=%r>' % self.id
 
     def set_location(self, lng, lat):
         self.location = "POINT(%0.16f %0.16f)" % (float(lng), float(lat))
