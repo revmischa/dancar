@@ -27,8 +27,27 @@
 * Display users and Dancar in real-time using Google Maps API and PostGIS.
 
 ## Tasks:
-[ ] Android client
-[ ] iOS client
-[ ] WebSocket push event support, falling back to poll-based location update
-[x] Poll-based location updating
-[ ] Notification system to inform users of Dancar status, and inform Dancar driver of pickup requests
+* Android client
+* iOS client
+* Web client
+* WebSocket push event support, falling back to poll-based location update
+* ~~Poll-based location updating~~ done
+* Notification system to inform users of Dancar status, and inform Dancar driver of pickup requests
+* Cooler interface
+* Cooler map markers
+
+## How to run
+* Install postgresql, postGIS
+```
+createdb dancar
+
+#(might need to do this if not using Postgres.app): 
+echo "CREATE EXTENSION postgis" | psql -U postgres dancar
+
+psql dancar < schema.txt
+virtualenv venv
+. venv/bin/activate
+pip install -r requirements.txt
+python dancar.py
+```
+And you should be good to go.
