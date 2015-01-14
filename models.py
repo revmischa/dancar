@@ -21,8 +21,10 @@ class User(db.Model):
     def set_location(self, lng, lat):
         self.location = "POINT(%0.16f %0.16f)" % (float(lng), float(lat))
 
-    def get_lng(self):
-        return to_shape(self.location).x
+    @property
+    def lng (self) :
+        return 0 if self.location is None else to_shape(self.location).x
 
-    def get_lat(self):
-        return to_shape(self.location).y
+    @property
+    def lat(self):
+        return 0 if self.location is None else to_shape(self.location).y
