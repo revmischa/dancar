@@ -25,7 +25,7 @@
 ## Approach
 * Track users via smartphone apps. Simple read of GPS position, HTTP POST to update current location.
 * Display users and Dancar in real-time using Google Maps API and PostGIS.
-* Magic happens in user.location update trigger, see [schema.sql](`schema.sql`)
+* Magic happens in user.location update trigger, see [`schema.sql`](schema.sql)
 
 ## Tasks:
 * Android client
