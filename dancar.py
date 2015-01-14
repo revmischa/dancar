@@ -44,9 +44,9 @@ def api_user(uid):
     if not user:
         return "Does not exist"
     ret = dict(id=uid, name=user.name, updated_location=user.updated_location)
-    if user.location:
-        ret.lat = user.get_lat();
-        ret.lng = user.get_lng();
+    if user.location is not None:
+        ret['lat'] = user.get_lat();
+        ret['lng'] = user.get_lng();
     return jsonify(**ret)
 
 
