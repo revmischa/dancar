@@ -17,8 +17,8 @@ class DanError (Exception) :
 
 # Catch DanError and return back a flask response
 @app.errorhandler(DanError)
-def catchDan(self) :
-    return self.message , self.code , self.headers
+def catchDan(error) :
+    return error.message , error.code , error.headers
 
 # called from __main__.py when "python DanCar" is run from the root.
 def run():
