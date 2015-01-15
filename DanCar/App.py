@@ -1,4 +1,4 @@
-from flask import Flask, abort
+from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -7,7 +7,6 @@ db = SQLAlchemy(app)
 #from flask_sockets import Sockets
 #sockets = Sockets(app)
 
-# DanCar error. If caught while handling a request the code is extracted and passed to abort()
 # Throw this error from within DanCar instead of calling abort() directly.
 # Doing so allows for error recovery or extra logging.
 class DanError (Exception) :
@@ -16,6 +15,7 @@ class DanError (Exception) :
         self.code = code
         self.headers = headers
 
+# Catch DanError and return back a flask response
 @app.errorhandler(DanError)
 def catchDan(self) :
     return self.message , self.code , self.headers
