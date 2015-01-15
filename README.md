@@ -49,7 +49,6 @@ psql dancar < schema.txt
 virtualenv venv
 . venv/bin/activate
 pip install -r requirements.txt
-cd server
-python dancar.py
+python DanCar
 ```
 And you should be good to go.

@@ -1,6 +1,14 @@
 from geoalchemy2 import Geography
 from geoalchemy2.shape import to_shape
-from dancar import db
+from App import DanError, db
+
+def all():
+    return User.query.all()
+    
+def load(uid):
+    user = User.query.get(uid)
+    if not user : raise DanError(404,"404: Dan not found.")
+    return user
 
 class User(db.Model):
 
