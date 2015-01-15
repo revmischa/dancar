@@ -37,7 +37,7 @@
 * Cooler interface
 * Cooler map markers
 
-## How to run
+## Running the Server
 * Install postgresql, postGIS
 ```
 createdb dancar
