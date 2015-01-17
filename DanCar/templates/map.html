@@ -15,6 +15,7 @@
 
             setupMap();
             registerLocationUpdatesPolling();
+            updateLocationPoll();
 
             /////
 
@@ -65,7 +66,7 @@
             }
 
             function registerLocationUpdatesPolling() {
-                window.setInterval(updateLocationPoll, 1000);
+                window.setInterval(updateLocationPoll, 5000);
             }
 
             function updateLocationPoll() {
