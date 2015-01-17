@@ -15,10 +15,6 @@ class User(db.Model, UserMixin):
     reset_password_token = db.Column(db.String(), nullable=False, server_default='')
     active = db.Column('is_active', db.Boolean(), nullable=False, server_default='1')
 
-    def __init__(self, name, location):
-        self.name = name
-        self.location = location
-
     def __repr__(self):
         return '<user id=%r>' % self.id
 

@@ -36,4 +36,3 @@ COMMENT ON FUNCTION update_user_table() IS E'When a user\'s location is changed,
 CREATE TRIGGER user_update_notify BEFORE UPDATE OR INSERT
     ON "user" FOR EACH ROW EXECUTE PROCEDURE update_user_table();
 
-INSERT INTO "user" (name, email, password, reset_password_token) VALUES ('danh', 'kegstand@gmail.com', 'test', '');

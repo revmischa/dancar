@@ -4,12 +4,24 @@
 from dancar import app
 from dancar.models import User
 from flask import render_template as render, jsonify, request
+from flask_user.forms import RegisterForm
+from flask_wtf import Form
+from wtforms import StringField, SubmitField, validators
 
-# @sockets.route('/echo') 
-# def echo_socket(ws): 
-#     while True: 
-#         message = ws.receive() 
-#         ws.send(message)
+
+## forms
+
+class UserRegisterForm(RegisterForm):
+    name = StringField('Name', validators=[
+        validators.DataRequired('Name is required')])
+
+class UserEditForm(Form):
+    name = StringField('Name', validators=[
+        validators.DataRequired('Name is required')])
+    submit = SubmitField('Save')
+
+
+## routes
 
 @app.route('/')
 def index():
@@ -29,6 +41,10 @@ def user_update(uid):
     user.set_location(request.form['lng'],request.form['lat'])
     return "Location updated."
 
+# @app.route('/user/register')
+# def user_register():
+#     return render('register.html')
+
 @app.route('/api/user/<uid>', methods=['GET'])
 def api_user(uid):
     user = User.query.get(uid)
@@ -39,3 +55,11 @@ def api_user(uid):
         'lat':user.lat,
         'lng':user.lng
     })
+
+
+## websocket handler for location push update
+# @sockets.route('/echo') 
+# def echo_socket(ws): 
+#     while True: 
+#         message = ws.receive() 
+#         ws.send(message)

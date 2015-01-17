@@ -1,5 +1,6 @@
 import os
 
+# base settings
 class Config(object):
     DEBUG = False
     TESTING = False
@@ -8,6 +9,10 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'postgresql://localhost/dancar')
     USER_LOGIN_TEMPLATE = 'flask_user/login_or_register.html'
     USER_REGISTER_TEMPLATE = 'flask_user/login_or_register.html'
+    USER_ENABLE_USERNAME = False
+    USER_ENABLE_CHANGE_USERNAME = False
+    USER_ENABLE_LOGIN_WITHOUT_CONFIRM = True
+    USER_ENABLE_CONFIRM_EMAIL = False
 
 class ProductionConfig(Config):
     DEBUG = False

@@ -11,3 +11,5 @@ body.page       { margin: 2em auto; width: 35em; border: 5px solid #ccc;
 .error          { background: #f0d6d6; padding: 0.5em; }
 
 #map-canvas     { height: 500px;  margin: 0; padding: 0;}
+
+#site-header	{ margin-bottom: 20px; }
