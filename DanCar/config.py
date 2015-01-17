@@ -4,8 +4,8 @@ class Config(object):
     DEBUG = False
     TESTING = False
     CSRF_ENABLED = True
-    if os.environ.has_key('DATABASE_URL'):
-        SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+    SECRET_KEY = os.getenv('SECRET_KEY', 'THIS IS AN INSECURE SECRET')
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'postgresql://localhost/dancar')
 
 
 class ProductionConfig(Config):
@@ -20,7 +20,6 @@ class StagingConfig(Config):
 class DevelopmentConfig(Config):
     DEVELOPMENT = True
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/dancar'
 
 
 class TestingConfig(Config):
