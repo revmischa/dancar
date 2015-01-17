@@ -1,6 +1,6 @@
 from geoalchemy2 import Geography
 from geoalchemy2.shape import to_shape
-from dancar import error, db
+from . import error, db
 from flask_user import UserMixin
 
 class User(db.Model, UserMixin):

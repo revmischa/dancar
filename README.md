@@ -33,6 +33,7 @@
 * Web client
 * WebSocket push event support, falling back to poll-based location update
 * ~~Poll-based location updating~~ done
+* ~~User registration / login with Flask-User~~ done
 * Notification system to inform users of Dancar status, and inform Dancar driver of pickup requests
 * Cooler interface
 * Cooler map markers
