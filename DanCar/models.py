@@ -13,7 +13,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(), nullable=False, unique=True)
     password = db.Column(db.String(), nullable=False, server_default='')
     reset_password_token = db.Column(db.String(), nullable=False, server_default='')
-    active = db.Column(db.Boolean(), nullable=False, server_default='1')
+    active = db.Column('is_active', db.Boolean(), nullable=False, server_default='1')
 
     def __init__(self, name, location):
         self.name = name

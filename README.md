@@ -52,3 +52,7 @@ pip install -r requirements.txt
 python runserver.py
 ```
 And you should be good to go.
+
+## Try it out
+View the DanH user map, then run `python util/update_pos.py` to update the DanCar with random coordinates.
+
