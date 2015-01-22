@@ -47,6 +47,8 @@ createdb dancar
 
 # (OSX)
 http://postgresapp.com/
+echo "export PATH=/Applications/Postgres.app/Contents/Versions/9.4/bin/:$PATH" > ~/.profile
+Reopen your terminal
 
 createdb dancar
 echo "CREATE EXTENSION postgis" | psql dancar
