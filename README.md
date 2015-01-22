@@ -41,10 +41,10 @@
 ## Running the Server
 * Install postgresql, postGIS
 ```
+sudo -u postgres createuser -s $USER
 createdb dancar
 
-#(might need to do this if not using Postgres.app): 
-echo "CREATE EXTENSION postgis" | psql -U postgres dancar
+echo "CREATE EXTENSION postgis" | psql dancar
 
 psql dancar < schema.txt
 virtualenv venv
