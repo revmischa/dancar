@@ -52,7 +52,7 @@ http://postgresapp.com/
 
 echo "CREATE EXTENSION postgis" | psql dancar
 
-psql dancar < schema.txt
+psql dancar < schema.sql
 virtualenv venv
 . venv/bin/activate
 pip install -r requirements.txt
