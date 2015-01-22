@@ -14,7 +14,7 @@ def index():
 @app.route('/user/list')
 @login_required
 def user_list():
-    return render('users.html',users=User.query.all())
+    return render('users.html', users=User.query.all())
 
 @app.route('/user/<uid>')
 @login_required
