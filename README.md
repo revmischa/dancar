@@ -51,6 +51,8 @@ createdb dancar
 http://postgresapp.com/
 
 echo "CREATE EXTENSION postgis" | psql dancar
+createdb dancar
+
 
 psql dancar < schema.sql
 virtualenv venv
