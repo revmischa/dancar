@@ -41,8 +41,14 @@
 ## Running the Server
 * Install postgresql, postGIS
 ```
-sudo -u postgres createuser -s $USER
+# (LINUX)
+sudo postgresql-setup initdb
+sudo service postgresql start
+sudo -u postgres -- createuser -s $USER
 createdb dancar
+
+# (OSX)
+http://postgresapp.com/
 
 echo "CREATE EXTENSION postgis" | psql dancar
 
