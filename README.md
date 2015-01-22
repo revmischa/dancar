@@ -42,8 +42,6 @@
 * Install postgresql, postGIS
 ```
 # (LINUX)
-sudo postgresql-setup initdb
-sudo service postgresql start
 sudo -u postgres -- createuser -s $USER
 createdb dancar
 
