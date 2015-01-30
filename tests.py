@@ -1,6 +1,8 @@
 import os
 import dancar
 import unittest
+import random
+import json
 from bs4 import BeautifulSoup
 
 class WebTestCase(unittest.TestCase):
@@ -23,7 +25,7 @@ class WebTestCase(unittest.TestCase):
     def logout_web(self):
         return self.app.get('/user/sign-out', follow_redirects=True)
 
-    def test_login_logout_web(self):
+    def test_web_login_logout(self):
         # login
         rv = self.login_web('test@test.com', 'test')
         assert 'You have signed in successfully' in rv.data
@@ -36,6 +38,21 @@ class WebTestCase(unittest.TestCase):
         # invalid password
         rv = self.login_web('test@test.com', 'defaultx')
         assert 'Incorrect Email and Password' in rv.data
+
+    def test_api_location_client(self):
+        # test logging in and updating and retrieving the user's position
+        rv = self.login_web('test@test.com', 'test')
+        assert 'You have signed in successfully' in rv.data
+        # update position
+        lng = -122.25874046835327 + (random.random()-0.5)/100
+        lat = 37.87556521891249 + (random.random()-0.5)/100
+        rv = self.app.post('/api/user/update', data=dict(lng=lng, lat=lat))
+        assert 'Location updated' in rv.data
+        # get position
+        rv = self.app.get('/api/user/info')
+        ret = json.loads(rv.data)
+        assert str(ret.get('lat')) == str(lat), 'Got updated lat'
+        assert str(ret.get('lng')) == str(lng), 'Got updated lng'
 
 
 if __name__ == '__main__':

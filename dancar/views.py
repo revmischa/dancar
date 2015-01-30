@@ -21,19 +21,18 @@ def user_list():
 def user_view(uid):
     return render('map.html',user=User.query.get(uid))
 
-@app.route('/user/<uid>/update', methods=['POST'])
+@app.route('/api/user/update', methods=['POST'])
 @login_required
-def user_update(uid):
-    user = User.query.get(uid)
-    user.set_location(request.form['lng'],request.form['lat'])
+def user_update():
+    current_user.set_location(request.form['lng'],request.form['lat'])
     return "Location updated."
 
-@app.route('/api/user/<uid>', methods=['GET'])
+@app.route('/api/user/info', methods=['GET'])
 @login_required
-def api_user(uid):
-    user = User.query.get(uid)
+def api_user():
+    user = current_user
     return jsonify({
-        'id':uid,
+        'id':user.id,
         'name':user.name,
         'updated_location':user.updated_location,
         'lat':user.lat,
