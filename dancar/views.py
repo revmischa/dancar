@@ -50,28 +50,18 @@ def api_user():
         'lng':user.lng
     })
 
-# TODO: Create a route that allows location update via a RESTful API
-#
-# NOTE: I prepended this with '/workspace/' because I don't want to
-# step on other people's work right now. - danh
-#
-@app.route('/workspace/api/update', methods=['POST'])
-def workspace_user_update():
-    password = request.json['password']
-    email = request.json['email']
+# login via api
+@app.route('/workspace/api/login', methods=['POST'])
+def workspace_api_login():
+    password = request.args.get("password")
+    email = request.args.get("email")
 
-    user, user_email = app.user_manager.find_user_by_email(email)
-
-    if not user:
+    if app.user_manager.find_user_by_email(email):
+        pass
+    else:
         return("Email Not Found"), 422
 
-    # TODO: This does not behave how I want it to.  It might not be
-    # doing any useful work at all.
-    if not user.check_password(password):
-        return("Invalid Password"), 422
-
-    user.set_location(request.json['lat'],request.json['lng'])
-    return "Location updated."
+    return "Logged in."
 
 ## websocket handler for location push update
 # @sockets.route('/echo') 

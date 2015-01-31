@@ -22,13 +22,6 @@ class User(db.Model, UserMixin):
         self.location = "POINT(%0.16f %0.16f)" % (float(lng), float(lat))
         db.session.commit()
 
-    # Probably need to store password hashes, not passwords
-    def check_password(self, password):
-        if self.password == password:
-            return True
-        else:
-            return False
-
     @property
     def lat(self):
         return 0 if self.location is None else to_shape(self.location).y
