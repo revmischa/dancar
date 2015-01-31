@@ -1,18 +1,34 @@
 #!/usr/bin/env python
 
-import requests
+import json
+import os
+import pprint
 import random
+import sys
+from bs4 import BeautifulSoup
 
-# log in
-r = requests.post('http://localhost:5000/user/sign-in', data={'email':'test@test.com', 'password':'test'})
-print r.text
+sys.path.append("..")
+import dancar
 
-lng = -122.25874046835327 + (random.random()-0.5)/100;
-lat = 37.87556521891249 + (random.random()-0.5)/100;
+app = dancar.app.test_client()
+dancar.app.config['CSRF_ENABLED'] = False
 
-update = {
-    'lat': lat,
-    'lng': lng
-}
-r = requests.post('http://localhost:5000/user/1/update', data=update)
-#print r.text
+def login_web(username, password):
+    form = app.get('/user/sign-in').data
+    soup = BeautifulSoup(form)
+    token = soup.find(id='csrf_token').get('value')
+
+    return app.post('/user/sign-in', data=dict(
+        csrf_token=token,
+        email=username,
+        password=password
+    ), follow_redirects=True)
+
+rv = login_web('test@test.com', 'test')
+lng = -122.25874046835327 + (random.random()-0.5)/100
+lat = 37.87556521891249 + (random.random()-0.5)/100
+rv = app.post('/api/user/update', data=dict(lng=lng, lat=lat))
+rv = app.get('/api/user/info')
+ret = json.loads(rv.data)
+pp = pprint.PrettyPrinter(indent=4)
+pp.pprint(ret)

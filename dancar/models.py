@@ -23,9 +23,5 @@ class User(db.Model, UserMixin):
         db.session.commit()
 
     @property
-    def lng (self) :
-        return 0 if self.location is None else to_shape(self.location).x
-
-    @property
     def lat(self):
         return 0 if self.location is None else to_shape(self.location).y

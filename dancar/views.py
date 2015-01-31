@@ -3,43 +3,68 @@
 
 from . import app
 from .models import User
-from flask import render_template as render, jsonify, request
+from flask import abort, jsonify, request
 from flask_user import current_user, login_required
 
-
+# home
 @app.route('/')
 def index():
     return render('index.html')
 
+# view all users
 @app.route('/user/list')
 @login_required
 def user_list():
-    return render('users.html',users=User.query.all())
+    return render('users.html', users=User.query.all())
 
+# view a user's status
+# (should have some security on this)
 @app.route('/user/<uid>')
 @login_required
 def user_view(uid):
     return render('map.html',user=User.query.get(uid))
 
-@app.route('/user/<uid>/update', methods=['POST'])
+# view myself
+@app.route('/user/me')
 @login_required
-def user_update(uid):
-    user = User.query.get(uid)
-    user.set_location(request.form['lng'],request.form['lat'])
+def user_view_me():
+    return render('map.html',user=current_user)
+
+# update my position
+@app.route('/api/user/update', methods=['POST'])
+@login_required
+def user_update():
+    current_user.set_location(request.form['lng'],request.form['lat'])
     return "Location updated."
 
-@app.route('/api/user/<uid>', methods=['GET'])
+# get my user info
+@app.route('/api/user/info', methods=['GET'])
 @login_required
-def api_user(uid):
-    user = User.query.get(uid)
+def api_user():
+    user = current_user
     return jsonify({
-        'id':uid,
+        'id':user.id,
         'name':user.name,
         'updated_location':user.updated_location,
         'lat':user.lat,
         'lng':user.lng
     })
 
+# login via api
+@app.route('/workspace/api/login', methods=['POST'])
+def workspace_api_login():
+    email = request.form['email']
+    password = request.form['password']
+
+    user, user_email = app.user_manager.find_user_by_email(email)
+
+    if user and user.active:
+        if user.verify_password(password, user):
+            return "Valid email and password"
+        else:
+            return "Invalid password", 403
+    else:
+        return "Invalid email", 403
 
 ## websocket handler for location push update
 # @sockets.route('/echo') 
