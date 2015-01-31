@@ -1,6 +1,6 @@
 .PHONY: tests server
 
-tests:
+test:
 	python tests.py
 
 server:

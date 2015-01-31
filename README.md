@@ -40,27 +40,39 @@
 
 ## Running the Server
 * Install postgresql, postGIS
+### (LINUX)
 ```
-# (LINUX)
 sudo -u postgres -- createuser -s $USER
 createdb dancar
+```
 
-# (OSX)
-http://postgresapp.com/
-echo "export PATH=/Applications/Postgres.app/Contents/Versions/9.4/bin/:$PATH" > ~/.profile
+### (OSX)
+Install [postgres.app](http://postgresapp.com/)
+```
+echo "export PATH=/Applications/Postgres.app/Contents/Versions/9.4/bin/:$PATH" >> ~/.profile
+echo "export PGHOST=localhost" >> ~/.profile
+```
 Reopen your terminal
 
+### Init database
+```
 createdb dancar
 echo "CREATE EXTENSION postgis" | psql dancar
-
 psql dancar < schema.sql
+```
+
+### Grab python modules
+```
 virtualenv venv
 . venv/bin/activate
 pip install -r requirements.txt
 python runserver.py
 ```
-And you should be good to go.
-
+ 
+And you should be good to go. 
+ 
 ## Try it out
+`make server` 
+`make test` 
 View the DanH user map, then run `python util/update_pos.py` to update the DanCar with random coordinates.
 

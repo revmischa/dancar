@@ -3,7 +3,7 @@
 
 from . import app
 from .models import User
-from flask import abort, jsonify, request
+from flask import abort, jsonify, request, render_template as render
 from flask_user import current_user, login_required
 
 # home
