@@ -58,13 +58,7 @@ def workspace_api_login():
 
     user, user_email = app.user_manager.find_user_by_email(email)
 
-    # this block does not work
-    #if 'active' in user:
-    #   return("Email found")
-    #else:
-    #    return("Email Not Found"), 422
-
-    if hasattr(user, 'active'):
+    if user and user.active:
         return("Email found")
     else:
         return("Email Not Found"), 422
