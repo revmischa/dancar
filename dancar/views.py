@@ -3,7 +3,7 @@
 
 from . import app
 from .models import User
-from flask import render_template as render, jsonify, request
+from flask import abort, jsonify, request
 from flask_user import current_user, login_required
 
 # home
@@ -50,6 +50,23 @@ def api_user():
         'lng':user.lng
     })
 
+# TODO: Create a route that allows location update via a RESTful API
+#
+# NOTE: I prepended this with '/workspace/' because I don't want to
+# step on other people's work right now. - danh
+#
+@app.route('/workspace/api/update', methods=['POST'])
+def workspace_user_update():
+    password = request.json['password']
+    email = request.json['email']
+
+    user, user_email = app.user_manager.find_user_by_email(email)
+
+    if not user:
+        return("Email Not Found"), 422
+
+    user.set_location(request.json['lat'],request.json['lng'])
+    return "Location updated."
 
 ## websocket handler for location push update
 # @sockets.route('/echo') 
