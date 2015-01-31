@@ -25,8 +25,8 @@ def login_web(username, password):
     ), follow_redirects=True)
 
 rv = login_web('test@test.com', 'test')
-lng = -122.25874046835327 + (random.random()-0.5)/100
-lat = 37.87556521891249 + (random.random()-0.5)/100
+lng = -122.25874046835327 + (random.random()-0.5)/1000
+lat = 37.87556521891249 + (random.random()-0.5)/1000
 rv = app.post('/api/user/update', data=dict(lng=lng, lat=lat))
 rv = app.get('/api/user/info')
 ret = json.loads(rv.data)

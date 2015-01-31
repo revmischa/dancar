@@ -25,3 +25,7 @@ class User(db.Model, UserMixin):
     @property
     def lat(self):
         return 0 if self.location is None else to_shape(self.location).y
+
+    @property
+    def lng(self):
+        return 0 if self.location is None else to_shape(self.location).x

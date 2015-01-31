@@ -69,7 +69,7 @@
             }
 
             function updateLocationPoll() {
-                $.get('/api/user/{{ user.id }}', function(res) {
+                $.get('/api/user/info', function(res) {
                     updateMarker(res);
                 });
             }
