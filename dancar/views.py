@@ -1,7 +1,6 @@
 # Importing this module will bind routes to the app.
 # This could be futher split up into submodules if the number of endpoints grows too large for one file.
 
-import bcrypt
 from . import app
 from .models import User
 from flask import abort, jsonify, request
@@ -59,11 +58,8 @@ def workspace_api_login():
 
     user, user_email = app.user_manager.find_user_by_email(email)
 
-    # If email is valid
     if user and user.active:
-        # If password matches password.hash in user
-        # NOTE: This should probably be moved to models
-        if bcrypt.hashpw(password, user.password) == user.password:
+        if user.verify_password(password, user):
             return "Valid email and password"
         else:
             return "Invalid password", 403
