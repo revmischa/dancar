@@ -65,6 +65,11 @@ def workspace_user_update():
     if not user:
         return("Email Not Found"), 422
 
+    # TODO: This does not behave how I want it to.  It might not be
+    # doing any useful work at all.
+    if not user.check_password(password):
+        return("Invalid Password"), 422
+
     user.set_location(request.json['lat'],request.json['lng'])
     return "Location updated."
 
