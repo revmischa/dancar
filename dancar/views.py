@@ -53,15 +53,15 @@ def api_user():
 # login via api
 @app.route('/workspace/api/login', methods=['POST'])
 def workspace_api_login():
-    password = request.args.get("password")
-    email = request.args.get("email")
+    email = request.form['email']
+    password = request.form['password']
 
-    if app.user_manager.find_user_by_email(email):
+    # value for email gets passed.  this isnt matching
+    # in user_manager properly for it though
+    if app.user_manager.find_user_by_email(email) is True:
         pass
     else:
         return("Email Not Found"), 422
-
-    return "Logged in."
 
 ## websocket handler for location push update
 # @sockets.route('/echo') 
