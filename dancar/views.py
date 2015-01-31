@@ -56,11 +56,12 @@ def workspace_api_login():
     email = request.form['email']
     password = request.form['password']
 
-    # value for email gets passed.  this isnt matching
-    # in user_manager properly for it though
-    if app.user_manager.find_user_by_email(email) is True:
-        pass
-    else:
+    user, user_email = app.user_manager.find_user_by_email(email)
+
+    try:
+        user.active
+        return("Email found")
+    except AttributeError:
         return("Email Not Found"), 422
 
 ## websocket handler for location push update
