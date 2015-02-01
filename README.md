@@ -38,8 +38,11 @@
 * Cooler interface
 * Cooler map markers
 
+
 ## Running the Server
-* Install postgresql, postGIS
+
+* Step 1: Install PostgreSQL, postGIS
+
 ### (LINUX)
 ```
 sudo -u postgres -- createuser -s $USER
