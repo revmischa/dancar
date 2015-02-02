@@ -53,13 +53,14 @@ def api_user():
 # login via api
 @app.route('/workspace/api/login', methods=['POST'])
 def workspace_api_login():
+
     email = request.form['email']
     password = request.form['password']
 
     user, user_email = app.user_manager.find_user_by_email(email)
 
     if user and user.active:
-        if user.verify_password(password, user):
+        if app.user_manager.verify_password(password, user) is True:
             return "Valid email and password"
         else:
             return "Invalid password", 403
