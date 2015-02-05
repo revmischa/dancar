@@ -7,7 +7,7 @@ before_script:
     - "psql -U postgres -c 'create database dancar with owner travis'"
     - "psql dancar < schema.sql"
 
-script: python setup.py test
+script: make test
 
 after_success:
     # smoke weed
