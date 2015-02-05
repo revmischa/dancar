@@ -1,3 +1,5 @@
+![Build status](https://travis-ci.org/revmischa/dancar.svg?branch=master)
+
 # DANCAR
 ## "The Uber of DanH"
 
