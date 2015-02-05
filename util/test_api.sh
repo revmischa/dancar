@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import requests
-import random
 
 email = "test@test.com"
 password = "test"

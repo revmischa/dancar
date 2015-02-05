@@ -4,7 +4,9 @@
 from . import app
 from .models import User
 from flask import abort, jsonify, request, render_template as render
-from flask_user import current_user, login_required
+from flask_user import current_user, LoginManager, login_required
+
+from flask.ext.login import login_user 
 
 # home
 @app.route('/')
@@ -50,22 +52,36 @@ def api_user():
         'lng':user.lng
     })
 
-# login via api
-@app.route('/workspace/api/login', methods=['POST'])
-def workspace_api_login():
+# log in via api
+login_manager = LoginManager()
+login_manager.init_app(app)
 
+@login_manager.user_loader
+def load_user(uid):
+    return User.query.get(uid)
+
+@app.route('/workspace/api/login', methods=['GET', 'POST'])
+def login():
     email = request.form['email']
     password = request.form['password']
-
+ 
     user, user_email = app.user_manager.find_user_by_email(email)
 
     if user and user.active:
         if app.user_manager.verify_password(password, user) is True:
-            return "Valid email and password"
+            user.authenticated = True
+            login_user(user, remember=True)
+            # TODO: This should return a template.
+            return("Valid user and password.")
         else:
             return "Invalid password", 403
     else:
         return "Invalid email", 403
+
+@app.route('/login_test', methods=['GET', 'POST'])
+@login_required
+def login_test():
+    return("You are logged in.")
 
 ## websocket handler for location push update
 # @sockets.route('/echo') 
