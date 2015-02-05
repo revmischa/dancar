@@ -1,2 +1,13 @@
 language: python
+
+addons:
+    postgresql: "9.3"
+
+before_script:
+    - "psql -U postgres -c 'create database dancar with owner travis'"
+    - "psql dancar < schema.sql"
+
 script: python setup.py test
+
+after_success:
+    # smoke weed
