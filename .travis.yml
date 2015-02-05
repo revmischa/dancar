@@ -1,13 +1,16 @@
 language: python
-
 addons:
-    postgresql: "9.3"
+  postgresql: '9.3'
 
 before_script:
-    - "psql -U postgres -c 'create database dancar with owner travis'"
-    - "psql dancar < schema.sql"
+- psql -U postgres -c 'create database dancar with owner travis'
+- psql dancar < schema.sql
 
 script: make test
 
-after_success:
-    # smoke weed
+after_success: 
+  # smoke weed
+
+notifications:
+  slack:
+    secure: W1oAlns14MkxNDfegtA433jIXtzRmKZfgWyUafTCNsVX6xxmCjlHLli1s02tBJkuo5wuJt2zcnEGsuFN5N7J92lKgQZ7JZWO3eQUGIkdkhUZYVzPNwcvV/wCq0shVJzElmE46jDZ+JUucoGqXwPCFWd31YfGS+MRETWBHdVTySg=
