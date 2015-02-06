@@ -16,7 +16,7 @@ print "endpoint is http://localhost:5000/workspace/api/login'"
 
 s = requests.Session()
 
-s = s.get("http://localhost:5000/workspace/api/login", data=update)
+s = s.post("http://localhost:5000/workspace/api/login", data=update)
 
 print "Headers the server sent back to us:"
 print s.headers
