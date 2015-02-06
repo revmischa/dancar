@@ -14,11 +14,12 @@ print "email is:", email
 print "password is:", password
 print "endpoint is http://localhost:5000/workspace/api/login'"
 
-s = requests.Session()
+sesh = requests.Session()
 
-s = s.post("http://localhost:5000/workspace/api/login", data=update)
+res = sesh.post("http://localhost:5000/workspace/api/login", data=update)
 
 print "Headers the server sent back to us:"
-print s.headers
+print res.headers
 
-# TODO: next request should use session from previous request
+res = sesh.get("http://localhost:5000/api/user/info")
+print res.content

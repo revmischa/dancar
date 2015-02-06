@@ -54,6 +54,19 @@ class WebTestCase(unittest.TestCase):
         assert str(ret.get('lat')) == str(lat), 'Got updated lat'
         assert str(ret.get('lng')) == str(lng), 'Got updated lng'
 
+    def login_api(self, email, password):
+        endpoint = '/api/login'
+        req = {
+            'email': email,
+            'password': password
+        }
+        r = self.app.post(endpoint, data=req)
+        res = json.loads(r.data)
+        return res['success']
+
+    def test_api_login(self):
+        assert self.login_api('test@test.com', 'test') is True, 'Logged in via API'
+        assert self.login_api('test@test.com', 'not') is False, 'Failed login via API with invalid password'
 
 if __name__ == '__main__':
     unittest.main()

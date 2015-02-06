@@ -52,11 +52,7 @@ def api_user():
         'lng':user.lng
     })
 
-# @login_manager.user_loader
-# def load_user(uid):
-#     return User.query.get(uid)
-
-@app.route('/workspace/api/login', methods=['POST'])
+@app.route('/api/login', methods=['POST'])
 def api_login():
     email = request.form['email']
     password = request.form['password']
@@ -70,18 +66,5 @@ def api_login():
             user.authenticated = True
             login_user(user, remember=True)
             ok = True
-            print session
 
     return jsonify({ 'success': ok })
-
-@app.route('/login_test', methods=['GET', 'POST'])
-@login_required
-def login_test():
-    return("You are logged in.")
-
-## websocket handler for location push update
-# @sockets.route('/echo') 
-# def echo_socket(ws): 
-#     while True: 
-#         message = ws.receive() 
-#         ws.send(message)
