@@ -3,8 +3,8 @@
 
 from . import app
 from .models import User
-from flask import abort, jsonify, request, render_template as render
-from flask_user import current_user, LoginManager, login_required
+from flask import abort, jsonify, request, session, render_template as render
+from flask_user import current_user, login_required
 
 from flask.ext.login import login_user 
 
@@ -52,31 +52,27 @@ def api_user():
         'lng':user.lng
     })
 
-# log in via api
-login_manager = LoginManager()
-login_manager.init_app(app)
+# @login_manager.user_loader
+# def load_user(uid):
+#     return User.query.get(uid)
 
-@login_manager.user_loader
-def load_user(uid):
-    return User.query.get(uid)
-
-@app.route('/workspace/api/login', methods=['GET', 'POST'])
-def login():
+@app.route('/workspace/api/login', methods=['POST'])
+def api_login():
     email = request.form['email']
     password = request.form['password']
  
     user, user_email = app.user_manager.find_user_by_email(email)
 
+    ok = False
+
     if user and user.active:
         if app.user_manager.verify_password(password, user) is True:
             user.authenticated = True
             login_user(user, remember=True)
-            # TODO: This should return a template.
-            return("Valid user and password.")
-        else:
-            return "Invalid password", 403
-    else:
-        return "Invalid email", 403
+            ok = True
+            print session
+
+    return jsonify({ 'success': ok })
 
 @app.route('/login_test', methods=['GET', 'POST'])
 @login_required
