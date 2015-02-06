@@ -14,3 +14,6 @@ after_success:
 notifications:
   slack:
     secure: W1oAlns14MkxNDfegtA433jIXtzRmKZfgWyUafTCNsVX6xxmCjlHLli1s02tBJkuo5wuJt2zcnEGsuFN5N7J92lKgQZ7JZWO3eQUGIkdkhUZYVzPNwcvV/wCq0shVJzElmE46jDZ+JUucoGqXwPCFWd31YfGS+MRETWBHdVTySg=
+  webhooks:
+    on_success: change
+    on_failure: change
