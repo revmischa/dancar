@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <a href="{{ url_for('user_list') }}">User list</a>
+	{% include "client.html" %}
+	{% include "map.html" %}
 {% endblock %}

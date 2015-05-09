@@ -24,13 +24,13 @@ def user_list():
 @app.route('/user/<uid>')
 @login_required
 def user_view(uid):
-    return render('map.html',user=User.query.get(uid))
+    return render('view_user.html', user=User.query.get(uid))
 
 # view myself
 @app.route('/user/me')
 @login_required
 def user_view_me():
-    return render('map.html',user=current_user)
+    return render('map.view_user', user=current_user)
 
 # update my position
 @app.route('/api/user/update', methods=['POST'])
