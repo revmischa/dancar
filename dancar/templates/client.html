@@ -1,0 +1,28 @@
+<script>
+    $(function() {
+        var danc = new Dancar();
+
+        danc.checkLoggedIn(function(res) {
+            $(".client").fadeIn(function() {
+                if (res === false) {
+                    // not logged in
+                    $(".client .logged-in").hide();
+                    $(".client .not-logged-in").fadeIn();
+                } else {
+                    $(".client .not-logged-in").hide();
+                    $(".client .logged-in").fadeIn();
+                }
+            });
+        });
+    });
+</script>
+
+<section class="client" style="display: none;">
+    <div class="not-logged-in" style="display: none;">
+        <h2>Not logged in</h2>
+        You must <a href="/user/sign-in">log in</a> to use DanCar
+    </div>
+    <div class="logged-in" style="display: none;">
+        Logged in!
+    </div>
+</section>,.

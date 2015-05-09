@@ -41,9 +41,13 @@ def user_update():
 
 # get my user info
 @app.route('/api/user/info', methods=['GET'])
-@login_required
 def api_user():
     user = current_user
+    if not user:
+        return jsonify({
+            'id': None
+        });
+    # logged in
     return jsonify({
         'id':user.id,
         'name':user.name,
