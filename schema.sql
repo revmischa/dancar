@@ -10,6 +10,7 @@ CREATE TABLE "user" (
   password TEXT NOT NULL,
   reset_password_token TEXT NOT NULL,
   is_active BOOLEAN NOT NULL DEFAULT 't',
+  can_pickup BOOLEAN NOT NULL DEFAULT 't',
   location GEOGRAPHY
 );
 COMMENT ON COLUMN "user"."email" IS E'email is username';
