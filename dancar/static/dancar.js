@@ -70,7 +70,7 @@ $.extend(Dancar.prototype, {
         // start watching location
         var watchID = navigator.geolocation.watchPosition(function(position) {
             // console.log("got new position: " + position.coords.latitude + ", " + position.coords.longitude);
-            // self.updateLatLng(position.coords.latitude, position.coords.longitude);
+            self.updateLatLng(position.coords.latitude, position.coords.longitude, position.coords.accuracy);
             // console.log(position);
             if (updatecb)
                 updatecb(position);
@@ -80,7 +80,7 @@ $.extend(Dancar.prototype, {
     },
 
     // set new lng/lat for the current user
-    updateLatLng: function(lat, lng) {
+    updateLatLng: function(lat, lng, accuracy_meters) {
         // ideally we would retry later if not logged in when this is called
         if (! this.loggedIn)
             return;
@@ -91,10 +91,15 @@ $.extend(Dancar.prototype, {
             return;
         }
 
-        $.post('/api/user/update', {
+        var update = {
             'lat': lat,
             'lng': lng
-        }, function(res) {
+        };
+
+        if (accuracy_meters)
+            update.location_accuracy_meters = accuracy_meters;
+
+        $.post('/api/user/update', update, function(res) {
             // console.log("updated position");
         });
     },

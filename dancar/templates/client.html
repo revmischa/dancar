@@ -33,6 +33,7 @@
                     notLoggedIn();
                 } else if (! isLoggedIn && res) {
                     loggedIn();
+                    updateUserMap();
                 }
             });
         }

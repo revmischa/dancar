@@ -2,7 +2,7 @@
 # This could be futher split up into submodules if the number of endpoints grows too large for one file.
 
 from . import app
-from .models import User
+from .models import db, User
 from flask import abort, jsonify, request, session, render_template as render
 from flask_user import current_user, login_required
 from time import mktime
@@ -37,6 +37,9 @@ def user_view_me():
 @login_required
 def user_update():
     current_user.set_location(request.form['lng'],request.form['lat'])
+    if 'location_accuracy_meters' in request.form:
+        current_user.location_accuracy_meters = request.form['location_accuracy_meters']
+        db.session.commit()
     return "Location updated."
 
 # get my user info
@@ -67,7 +70,8 @@ def api_user():
 def api_all_users():
     ret = []
 
-    users = User.query.filter_by(is_active=1).all();
+    # users = User.query.filter_by(is_active=1).all();
+    users = User.query.all();
 
     for user in users:
         if user.updated_location:
