@@ -22,8 +22,7 @@
                     center: new google.maps.LatLng(37.88, -122.26),
                     mapTypeId: google.maps.MapTypeId.HYBRID
                 };
-                map = new google.maps.Map(document.getElementById('map-canvas'),
-                mapOptions);
+                map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
             }
 
             function updateMarker(user) {
@@ -49,9 +48,11 @@
                         });
                         markers[id + ""] = marker;
 
+                        var updatedDate = new Date(user.updated_location * 1000);
+
                         var $win = $("<div/>");
                         $win.append($("<div/>").text(user.name));
-                        $win.append($("<div/>").text(user.updated_location));
+                        $win.append($("<div/>").text($.timeago(updatedDate)));
                         var win = new google.maps.InfoWindow({
                             'content': $win.get(0)
                         });

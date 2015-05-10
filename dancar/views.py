@@ -5,7 +5,7 @@ from . import app
 from .models import User
 from flask import abort, jsonify, request, session, render_template as render
 from flask_user import current_user, login_required
-
+from time import mktime
 from flask.ext.login import login_user 
 
 # home
@@ -48,10 +48,15 @@ def api_user():
             'id': None
         });
     # logged in
+    if user.updated_location:
+        update_unixtime = mktime(user.updated_location.timetuple())
+    else:
+        update_unixtime = None
+
     return jsonify({
         'id':user.id,
         'name':user.name,
-        'updated_location':user.updated_location,
+        'updated_location':update_unixtime,
         'lat':user.lat,
         'lng':user.lng
     })
