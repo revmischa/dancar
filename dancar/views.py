@@ -42,6 +42,21 @@ def user_update():
         db.session.commit()
     return "Location updated."
 
+def flatten_user(user):
+    if user.updated_location:
+        update_unixtime = mktime(user.updated_location.timetuple())
+    else:
+        update_unixtime = None
+
+    return {
+        'id':user.id,
+        'name':user.name,
+        'updated_location':update_unixtime,
+        'lat':user.lat,
+        'lng':user.lng,
+        'location_accuracy_meters':user.location_accuracy_meters    
+    }
+
 # get my user info
 @app.route('/api/user/info', methods=['GET'])
 def api_user():
@@ -51,18 +66,7 @@ def api_user():
             'id': None
         });
     # logged in
-    if user.updated_location:
-        update_unixtime = mktime(user.updated_location.timetuple())
-    else:
-        update_unixtime = None
-
-    return jsonify({
-        'id':user.id,
-        'name':user.name,
-        'updated_location':update_unixtime,
-        'lat':user.lat,
-        'lng':user.lng
-    })
+    return jsonify(flatten_user(user))
 
 # get positions of all active users
 @app.route('/api/user/all', methods=['GET'])
@@ -79,13 +83,7 @@ def api_all_users():
         else:
             update_unixtime = None
 
-        ret.append({
-            'id':user.id,
-            'name':user.name,
-            'updated_location':update_unixtime,
-            'lat':user.lat,
-            'lng':user.lng
-        })
+        ret.append(flatten_user(user))
 
     return jsonify({
         'users': ret
