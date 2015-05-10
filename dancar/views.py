@@ -67,7 +67,7 @@ def api_user():
 def api_all_users():
     ret = []
 
-    users = User.query.all();
+    users = User.query.filter_by(is_active=1).all();
 
     for user in users:
         if user.updated_location:
