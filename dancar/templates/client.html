@@ -37,10 +37,16 @@
             });
         }
 
+        function updateUserMap() {
+            danc.updateUserMap();
+        }
+
         status("Initializing DanCar...");
+        danc.initializeMap();
         danc.initializeGeolocating(positionUpdated, positionError);
         updateLoginStatus();
         window.setInterval(updateLoginStatus, 5000);
+        window.setInterval(updateUserMap, 2000);
     });
 </script>
 

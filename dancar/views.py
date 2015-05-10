@@ -61,6 +61,32 @@ def api_user():
         'lng':user.lng
     })
 
+# get positions of all active users
+@app.route('/api/user/all', methods=['GET'])
+@login_required
+def api_all_users():
+    ret = []
+
+    users = User.query.all();
+
+    for user in users:
+        if user.updated_location:
+            update_unixtime = mktime(user.updated_location.timetuple())
+        else:
+            update_unixtime = None
+
+        ret.append({
+            'id':user.id,
+            'name':user.name,
+            'updated_location':update_unixtime,
+            'lat':user.lat,
+            'lng':user.lng
+        })
+
+    return jsonify({
+        'users': ret
+    })
+
 @app.route('/api/login', methods=['POST'])
 def api_login():
     email = request.form['email']
