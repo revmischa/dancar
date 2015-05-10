@@ -14,6 +14,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(), nullable=False, server_default='')
     reset_password_token = db.Column(db.String(), nullable=False, server_default='')
     active = db.Column('is_active', db.Boolean(), nullable=False, server_default='1')
+    can_pickup = db.Column('can_pickup', db.Boolean(), nullable=False, server_default='1')
 
     def __repr__(self):
         return '<user id=%r>' % self.id
