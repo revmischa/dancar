@@ -50,6 +50,11 @@ $.extend(Dancar.prototype, {
         });
     },
 
+    geoPositionOptions: function() {
+        // enableHighAccuracy may require special permissions, could fail
+        return { 'enableHighAccuracy': true };
+    }
+
     // start tracking/updating position
     initializeGeolocating: function(updatecb, errorcb) {
         var self = this;
@@ -68,13 +73,27 @@ $.extend(Dancar.prototype, {
         }
 
         // start watching location
+        var positionOptions = this.geoPositionOptions();
         var watchID = navigator.geolocation.watchPosition(function(position) {
             // console.log("got new position: " + position.coords.latitude + ", " + position.coords.longitude);
             self.updateLatLng(position.coords.latitude, position.coords.longitude, position.coords.accuracy);
             // console.log(position);
             if (updatecb)
                 updatecb(position);
-        });
+        }, function(err) {
+            // error
+            if (err.code == 1) {
+                // PERMISSION_DENIED
+                if (errorcb)
+                    errorcb("You must grant permission for your browser to acquire your location to use DanCar");
+                return;
+            } else if (err.code == 2) {
+                // POSITION_UNAVAILABLE
+                if (errorcb)
+                    errorcb("Could not determine your location");
+                return;
+            } // ...
+        }, positionOptions);
 
         this.locWatchID = watchID;
     },
