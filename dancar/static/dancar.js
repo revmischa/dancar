@@ -53,7 +53,7 @@ $.extend(Dancar.prototype, {
     geoPositionOptions: function() {
         // enableHighAccuracy may require special permissions, could fail
         return { 'enableHighAccuracy': true };
-    }
+    },
 
     // start tracking/updating position
     initializeGeolocating: function(updatecb, errorcb) {
