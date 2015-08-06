@@ -1,11 +1,18 @@
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask_user import login_required, UserManager, UserMixin, SQLAlchemyAdapter
+import os
+import logging
 
 app = Flask(__name__)
 
 # load database
 db = SQLAlchemy(app)
+
+if os.getenv('SQL'):
+    logging.basicConfig()
+    logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+
 
 # load routes
 import dancar.views

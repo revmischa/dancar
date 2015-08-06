@@ -3,12 +3,17 @@ import dancar
 import unittest
 import random
 import json
+from dancar.models import User
 from bs4 import BeautifulSoup
 
 class WebTestCase(unittest.TestCase):
     def setUp(self):
         self.app = dancar.app.test_client()
+        self.db = dancar.db
         dancar.app.config['CSRF_ENABLED'] = False
+        # if self.app.config['TESTING']:
+        #     print "Creating database"
+
 
     def login_web(self, username, password):
         # get CSRF token
@@ -54,6 +59,22 @@ class WebTestCase(unittest.TestCase):
         assert str(ret.get('lat')) == str(lat), 'Got updated lat'
         assert str(ret.get('lng')) == str(lng), 'Got updated lng'
 
+    # request a ride
+    def test_pickup_request(self):
+        db = self.db
+        rv = self.login_web('test@test.com', 'test')
+
+        # create driver user
+        driver_user = self.create_test_user('testdriver')
+        driver_user.enable_pickup(duration_secs=2)
+
+        # list available drivers
+        dancars = AvailableDancars.query.all()
+        assert len(dancars) == 1, "Found dancar driver for pickup"
+
+        db.session.delete(driver_user)
+        db.session.commit()
+
     def login_api(self, email, password):
         endpoint = '/api/login'
         req = {
@@ -63,6 +84,21 @@ class WebTestCase(unittest.TestCase):
         r = self.app.post(endpoint, data=req)
         res = json.loads(r.data)
         return res['success']
+
+    def create_test_user(self, name):
+        u = User()
+        u.name = name
+        u.email = name + '@test.com'
+        u.password = 'x'
+        u.reset_password_token = 'x'
+        self.db.session.add(u)
+        self.db.session.commit()
+
+        lng = -122.25874046835327 + (random.random()-0.5)/100
+        lat = 37.87556521891249 + (random.random()-0.5)/100
+        u.set_location(lng, lat)
+
+        return u        
 
     def test_api_login(self):
         assert self.login_api('test@test.com', 'test') is True, 'Logged in via API'
