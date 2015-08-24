@@ -3,7 +3,7 @@ import dancar
 import unittest
 import random
 import json
-from dancar.models import User
+from dancar.models import User, AvailableDancars
 from bs4 import BeautifulSoup
 
 class WebTestCase(unittest.TestCase):

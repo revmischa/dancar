@@ -4,9 +4,7 @@ from . import error, db
 from flask_user import UserMixin
 import datetime
 
-class User(db.Model, UserMixin):
-    # DB Setup
-    __tablename__ = 'user'
+class UserBase():
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String())
     updated_location = db.Column(db.DateTime())
@@ -26,7 +24,6 @@ class User(db.Model, UserMixin):
         return '<user id=%r>' % self.id
 
     def enable_pickup(self, duration_secs=0):
-        print "secs: " + str(duration_secs)
         self.last_pickup_available_start = "NOW()"
         delta = datetime.timedelta(0, duration_secs)
         self.last_pickup_available_duration = delta
@@ -47,8 +44,11 @@ class User(db.Model, UserMixin):
     def lng(self):
         return 0 if self.location is None else to_shape(self.location).x
 
-# class AvailableDancars(db.Model, UserMixin):
-#     __tablename__ = 'available_dancars'
 
-#     def __repr__(self):
-#         return '<dancars u=%r>' % self.id
+class User(UserBase, db.Model, UserMixin):
+    __tablename__ = 'user'
+
+class AvailableDancars(UserBase, db.Model, UserMixin):
+    __tablename__ = 'available_dancars'
+    def __repr__(self):
+        return '<dancars u=%r>' % self.id

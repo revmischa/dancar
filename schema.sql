@@ -40,6 +40,8 @@ CREATE VIEW "available_dancars" AS
     can_pickup='t' AND pickup_enabled='t' AND has_pickup='f' AND last_pickup_available_start IS NOT NULL AND
     (last_pickup_available_duration IS NULL OR ( last_pickup_available_duration IS NOT NULL AND last_pickup_available_start>NOW()-last_pickup_available_duration ));
 
+
+-- real-time location event spewer
 CREATE OR REPLACE FUNCTION update_user_table() RETURNS TRIGGER AS $$
 DECLARE
 BEGIN
@@ -57,7 +59,6 @@ END;
 $$ LANGUAGE plpgsql;
 COMMENT ON FUNCTION update_user_table() IS E'When a user\'s location is changed, updated_location is updated and a notification is sent over async message channel with geo data encoded in JSON';
 
---
 
 DROP TRIGGER IF EXISTS "user_update_notify" ON "user";
 CREATE TRIGGER user_update_notify BEFORE UPDATE OR INSERT
