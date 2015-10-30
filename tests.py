@@ -69,19 +69,19 @@ class WebTestCase(unittest.TestCase):
 
         # list available drivers
         dancars = AvailableDancars.query.all()
-        assert len(dancars) == 1, "Found dancar driver for pickup"
+        self.assertEquals(len(dancars), 1, "Found dancar driver for pickup")
         car = dancars[0]
 
         # request a pickup
         lng, lat = self.random_lng_lat()
         rv = self.app.post('/api/car/request_pickup/' + str(car.id), data=dict(lng=lng, lat=lat))
-        assert rv.status_code == 200, "Requested pickup"
+        self.assertEquals(rv.status_code, 200, "Requested pickup")
         pickup = json.loads(rv.data)
         assert 'request' in pickup, "Requested pickup successfully"
-        assert pickup['request']['use_user_location'] == False, "Use manually-defined pickup location"
-        assert pickup['request']['lng'] == lng, "Use manually-defined pickup location"
-        assert pickup['request']['lat'] == lat, "Use manually-defined pickup location"
-        assert pickup['request']['requestor_name'] == requestor_user.name, "Correct requestor"
+        self.assertEquals(pickup['request']['use_user_location'], False, "Use manually-defined pickup location")
+        self.assertEquals(pickup['request']['lng'], lng, "Use manually-defined pickup location")
+        self.assertEquals(pickup['request']['lat'], lat, "Use manually-defined pickup location")
+        self.assertEquals(pickup['request']['requestor_email'], 'test@test.com', "Correct requestor")
 
         db.session.delete(driver_user)
         db.session.commit()

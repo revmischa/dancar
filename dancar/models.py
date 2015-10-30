@@ -79,6 +79,7 @@ class UserBase(GeoReferenced):
         self.pickup_enabled = True
         db.session.commit()
 
+    # requestor requests a pickup from self
     def request_pickup(self, requestor):
         if not self.can_pickup:
             return None

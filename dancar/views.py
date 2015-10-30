@@ -153,6 +153,7 @@ def flatten_pickup_request(req):
         'cancelled':req.cancelled,
         'use_user_location':req.use_user_location,
         'requestor_name':req.requestor.name,
+        'requestor_email':req.requestor.email,
         'requestor_mobile':req.requestor.mobile,
     }
 
@@ -168,5 +169,5 @@ def flatten_user(user):
         'updated_location':update_unixtime,
         'lat':user.lat,
         'lng':user.lng,
-        'location_accuracy_meters':user.location_accuracy_meters    
+        'location_accuracy_meters':user.location_accuracy_meters,   
     }
