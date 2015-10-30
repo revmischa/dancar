@@ -150,7 +150,10 @@ def flatten_pickup_request(req):
         'accepted':req.accepted,
         'picked_up':req.picked_up,
         'completed':req.completed,
+        'cancelled':req.cancelled,
         'use_user_location':req.use_user_location,
+        'requestor_name':req.requestor.name,
+        'requestor_mobile':req.requestor.mobile,
     }
 
 def flatten_user(user):

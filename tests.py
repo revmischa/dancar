@@ -18,7 +18,7 @@ class WebTestCase(unittest.TestCase):
     def login_web(self, username, password):
         # get CSRF token
         form = self.app.get('/user/sign-in').data
-        soup = BeautifulSoup(form)
+        soup = BeautifulSoup(form, "html.parser")
         token = soup.find(id='csrf_token').get('value')
 
         return self.app.post('/user/sign-in', data=dict(
@@ -42,7 +42,7 @@ class WebTestCase(unittest.TestCase):
         assert 'Invalid Email' in rv.data
         # invalid password
         rv = self.login_web('test@test.com', 'defaultx')
-        assert 'Incorrect Email and Password' in rv.data
+        assert 'Incorrect Password' in rv.data
 
     def test_api_location_client(self):
         # test logging in and updating and retrieving the user's position
@@ -101,6 +101,7 @@ class WebTestCase(unittest.TestCase):
         u.email = name + '@test.com'
         u.password = 'x'
         u.reset_password_token = 'x'
+        u.mobile = '+1 555 555-6655'
         self.db.session.add(u)
         self.db.session.commit()
 

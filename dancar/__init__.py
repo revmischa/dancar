@@ -37,6 +37,7 @@ if app.config.get('DEVELOPMENT'):
             active = True,
             name = "DanH",
             email = "test@test.com",
+            mobile = '+1 510 555-5555',
             password = app.user_manager.hash_password('test'),
             reset_password_token = 'resettoken'
         )

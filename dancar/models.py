@@ -34,7 +34,21 @@ class PickupRequest(db.Model, GeoReferenced):
     accepted = db.Column(db.Boolean(), nullable=False, server_default=FetchedValue())
     picked_up = db.Column(db.Boolean(), nullable=False, server_default=FetchedValue())
     completed = db.Column(db.Boolean(), nullable=False, server_default=FetchedValue())
+    cancelled = db.Column(db.Boolean(), nullable=False, server_default=FetchedValue())
     use_user_location = db.Column(db.Boolean(), nullable=False, server_default=FetchedValue())
+
+    def confirm(self):
+        self.accepted = True
+        db.session.commit()
+
+    def cancel(self):
+        self.completed = True
+        db.session.commit()
+
+    def complete(self):
+        self.cancelled = True
+        self.completed = True
+        db.session.commit()
 
 class UserBase(GeoReferenced):
     id = db.Column(db.Integer, primary_key=True)
@@ -42,6 +56,7 @@ class UserBase(GeoReferenced):
 
     name = db.Column(db.String())
     email = db.Column(db.String(), nullable=False, unique=True)
+    mobile = db.Column(db.String(), nullable=False, unique=True)
     password = db.Column(db.String(), nullable=False, server_default=FetchedValue())
     reset_password_token = db.Column(db.String(), nullable=False, server_default=FetchedValue())
     active = db.Column('is_active', db.Boolean(), nullable=False, server_default=FetchedValue())

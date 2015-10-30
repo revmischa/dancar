@@ -8,8 +8,9 @@ CREATE TABLE "user" (
   id SERIAL PRIMARY KEY,
   created TIMESTAMP NOT NULL DEFAULT NOW(),
   
-  email TEXT NOT NULL,
+  email TEXT NOT NULL UNIQUE,
   name TEXT NOT NULL,
+  mobile TEXT NOT NULL,
   password TEXT NOT NULL,
   reset_password_token TEXT NOT NULL,
   is_active BOOLEAN NOT NULL DEFAULT 't',
@@ -50,6 +51,7 @@ CREATE TABLE "pickup_request" (
   accepted BOOLEAN NOT NULL DEFAULT 'f',
   picked_up BOOLEAN NOT NULL DEFAULT 'f',
   completed BOOLEAN NOT NULL DEFAULT 'f',
+  cancelled BOOLEAN NOT NULL DEFAULT 'f',
 
   use_user_location BOOLEAN NOT NULL DEFAULT 't',
 
