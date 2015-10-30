@@ -40,9 +40,26 @@ CREATE VIEW "available_dancars" AS
     can_pickup='t' AND pickup_enabled='t' AND has_pickup='f' AND last_pickup_available_start IS NOT NULL AND
     (last_pickup_available_duration IS NULL OR ( last_pickup_available_duration IS NOT NULL AND last_pickup_available_start>NOW()-last_pickup_available_duration ));
 
+CREATE TABLE "pickup_request" (
+  id SERIAL PRIMARY KEY,
+  created TIMESTAMP NOT NULL DEFAULT NOW(),
+
+  requestor_user_id INTEGER NOT NULL REFERENCES "user"(id),
+  driver_user_id INTEGER NOT NULL REFERENCES "user"(id),
+
+  accepted BOOLEAN NOT NULL DEFAULT 'f',
+  picked_up BOOLEAN NOT NULL DEFAULT 'f',
+  completed BOOLEAN NOT NULL DEFAULT 'f',
+
+  use_user_location BOOLEAN NOT NULL DEFAULT 't',
+
+  location GEOGRAPHY,
+  updated_location TIMESTAMP,
+  location_accuracy_meters NUMERIC
+);
 
 -- real-time location event spewer
-CREATE OR REPLACE FUNCTION update_user_table() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION update_georeferenced_table() RETURNS TRIGGER AS $$
 DECLARE
 BEGIN
 IF ( (TG_OP = 'INSERT' AND NEW.location IS NOT NULL) OR (TG_OP = 'UPDATE' AND NEW.location IS DISTINCT FROM OLD.location) ) THEN
@@ -57,10 +74,14 @@ PERFORM pg_notify('user_updated', '{"id": '
 RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-COMMENT ON FUNCTION update_user_table() IS E'When a user\'s location is changed, updated_location is updated and a notification is sent over async message channel with geo data encoded in JSON';
+COMMENT ON FUNCTION update_georeferenced_table() IS E'When a table\'s location is changed, updated_location is updated and a notification is sent over async message channel with geo data encoded in JSON';
 
 
 DROP TRIGGER IF EXISTS "user_update_notify" ON "user";
 CREATE TRIGGER user_update_notify BEFORE UPDATE OR INSERT
-    ON "user" FOR EACH ROW EXECUTE PROCEDURE update_user_table();
+    ON "user" FOR EACH ROW EXECUTE PROCEDURE update_georeferenced_table();
+
+DROP TRIGGER IF EXISTS "pickup_update_notify" ON "pickup_request";
+CREATE TRIGGER pickup_update_notify BEFORE UPDATE OR INSERT
+    ON "pickup_request" FOR EACH ROW EXECUTE PROCEDURE update_georeferenced_table();
 

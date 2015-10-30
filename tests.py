@@ -49,8 +49,7 @@ class WebTestCase(unittest.TestCase):
         rv = self.login_web('test@test.com', 'test')
         assert 'You have signed in successfully' in rv.data
         # update position
-        lng = -122.25874046835327 + (random.random()-0.5)/100
-        lat = 37.87556521891249 + (random.random()-0.5)/100
+        lng, lat = self.random_lng_lat()
         rv = self.app.post('/api/user/update', data=dict(lng=lng, lat=lat))
         assert 'Location updated' in rv.data
         # get position
@@ -66,11 +65,22 @@ class WebTestCase(unittest.TestCase):
 
         # create driver user
         driver_user = self.create_test_user('testdriver')
-        driver_user.enable_pickup(duration_secs=2)
+        driver_user.enable_pickup(duration_secs=5)
 
         # list available drivers
         dancars = AvailableDancars.query.all()
         assert len(dancars) == 1, "Found dancar driver for pickup"
+        car = dancars[0]
+
+        # request a pickup
+        lng, lat = self.random_lng_lat()
+        rv = self.app.post('/api/car/request_pickup/' + str(car.id), data=dict(lng=lng, lat=lat))
+        assert rv.status_code == 200, "Requested pickup"
+        pickup = json.loads(rv.data)
+        assert 'request' in pickup, "Requested pickup successfully"
+        assert pickup['request']['use_user_location'] == False, "Use manually-defined pickup location"
+        assert pickup['request']['lng'] == lng, "Use manually-defined pickup location"
+        assert pickup['request']['lat'] == lat, "Use manually-defined pickup location"
 
         db.session.delete(driver_user)
         db.session.commit()
@@ -94,8 +104,7 @@ class WebTestCase(unittest.TestCase):
         self.db.session.add(u)
         self.db.session.commit()
 
-        lng = -122.25874046835327 + (random.random()-0.5)/100
-        lat = 37.87556521891249 + (random.random()-0.5)/100
+        lng, lat = self.random_lng_lat()
         u.set_location(lng, lat)
 
         return u        
@@ -103,6 +112,11 @@ class WebTestCase(unittest.TestCase):
     def test_api_login(self):
         assert self.login_api('test@test.com', 'test') is True, 'Logged in via API'
         assert self.login_api('test@test.com', 'not') is False, 'Failed login via API with invalid password'
+
+    def random_lng_lat(self):
+        lng = -122.25874046835327 + (random.random()-0.5)/100
+        lat = 37.87556521891249 + (random.random()-0.5)/100
+        return str(lng), str(lat)
 
 if __name__ == '__main__':
     unittest.main()

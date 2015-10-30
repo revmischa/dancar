@@ -2,7 +2,7 @@
 # This could be futher split up into submodules if the number of endpoints grows too large for one file.
 
 from . import app
-from .models import db, User
+from .models import db, User, AvailableDancars
 from flask import abort, jsonify, request, session, render_template as render
 from flask_user import current_user, login_required
 from time import mktime
@@ -41,21 +41,6 @@ def user_update():
         current_user.location_accuracy_meters = request.form['location_accuracy_meters']
         db.session.commit()
     return "Location updated."
-
-def flatten_user(user):
-    if user.updated_location:
-        update_unixtime = mktime(user.updated_location.timetuple())
-    else:
-        update_unixtime = None
-
-    return {
-        'id':user.id,
-        'name':user.name,
-        'updated_location':update_unixtime,
-        'lat':user.lat,
-        'lng':user.lng,
-        'location_accuracy_meters':user.location_accuracy_meters    
-    }
 
 # get my user info
 @app.route('/api/user/info', methods=['GET'])
@@ -105,3 +90,80 @@ def api_login():
             ok = True
 
     return jsonify({ 'success': ok })
+
+# get dancars available for picking up passengers
+@app.route('/api/car/available', methods=['GET'])
+@login_required
+def api_available_cars():
+    cars = AvailableDancars.query.all()
+    ret = [flatten_user(car) for car in cars]
+    return jsonify({ 'cars': ret })
+
+# request a pickup
+# should pass in lng/lat/location_accuracy_meters (will use current_user's by default)
+@app.route('/api/car/request_pickup/<car_id>', methods=['POST'])
+@login_required
+def api_request_pickup(car_id):
+    # sanity-check that this car is still available
+    car = AvailableDancars.query.filter(AvailableDancars.id == car_id).scalar()
+    if not car:
+        return jsonify({ 'message': 'This car is not available for pickup' })
+
+    # request pickup
+    pickup_request = car.request_pickup(current_user)
+    if not pickup_request:
+        return jsonify({ 'message': 'Pickup request failed' })
+
+    # specific lng/lat?
+    if 'lng' in request.form and 'lat' in request.form:
+        pickup_request.set_location(request.form['lng'], request.form['lat'])
+        pickup_request.use_user_location = False
+        pickup_request.location_accuracy_meters = None
+        db.session.commit()
+
+    return jsonify({ 'message': 'Pickup requested', 'request': flatten_pickup_request(pickup_request) })
+
+def flatten_pickup_request(req):
+    if req.updated_location:
+        update_unixtime = mktime(req.updated_location.timetuple())
+    else:
+        update_unixtime = None
+
+    lng = req.lng
+    lat = req.lat
+    location_accuracy_meters = req.location_accuracy_meters
+
+    if req.use_user_location:
+        # override with user's current location?
+        u = req.requestor
+        lng = u.lng
+        lat = u.lat
+        location_accuracy_meters = u.location_accuracy_meters
+
+    return {
+        'id':req.id,
+        'created':req.created,
+        'updated_location':update_unixtime,
+        'lat':lat,
+        'lng':lng,
+        'location_accuracy_meters':location_accuracy_meters, 
+        'accepted':req.accepted,
+        'picked_up':req.picked_up,
+        'completed':req.completed,
+        'use_user_location':req.use_user_location,
+    }
+
+def flatten_user(user):
+    if user.updated_location:
+        update_unixtime = mktime(user.updated_location.timetuple())
+    else:
+        update_unixtime = None
+
+    return {
+        'id':user.id,
+        'name':user.name,
+        'updated_location':update_unixtime,
+        'lat':user.lat,
+        'lng':user.lng,
+        'location_accuracy_meters':user.location_accuracy_meters    
+    }
