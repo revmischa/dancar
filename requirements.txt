@@ -1,5 +1,4 @@
 alembic==0.8.3
-bcrypt==2.0.0
 BeautifulSoup==3.2.1
 beautifulsoup4==4.4.1
 blinker==1.4
