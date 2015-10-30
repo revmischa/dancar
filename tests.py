@@ -76,12 +76,15 @@ class WebTestCase(unittest.TestCase):
         lng, lat = self.random_lng_lat()
         rv = self.app.post('/api/car/request_pickup/' + str(car.id), data=dict(lng=lng, lat=lat))
         self.assertEquals(rv.status_code, 200, "Requested pickup")
-        pickup = json.loads(rv.data)
-        assert 'request' in pickup, "Requested pickup successfully"
-        self.assertEquals(pickup['request']['use_user_location'], False, "Use manually-defined pickup location")
-        self.assertEquals(pickup['request']['lng'], lng, "Use manually-defined pickup location")
-        self.assertEquals(pickup['request']['lat'], lat, "Use manually-defined pickup location")
-        self.assertEquals(pickup['request']['requestor_email'], 'test@test.com', "Correct requestor")
+        pickup = json.loads(rv.data)['pickup']
+        self.assertEquals(pickup['use_user_location'], False, "Use manually-defined pickup location")
+        self.assertEquals(pickup['lng'], lng, "Use manually-defined pickup location")
+        self.assertEquals(pickup['lat'], lat, "Use manually-defined pickup location")
+        self.assertEquals(pickup['requestor_email'], 'test@test.com', "Correct requestor")
+        self.assertEquals(pickup['driver_email'], driver_user.email, "Correct driver")
+
+        # confirm the pickup. should still be available
+        rv = self.app.post('/api/pickup/confirm/' + str(pickup['id']))
 
         db.session.delete(driver_user)
         db.session.commit()

@@ -121,7 +121,7 @@ def api_request_pickup(car_id):
         pickup_request.location_accuracy_meters = None
         db.session.commit()
 
-    return jsonify({ 'message': 'Pickup requested', 'request': flatten_pickup_request(pickup_request) })
+    return jsonify({ 'message': 'Pickup requested', 'pickup': flatten_pickup_request(pickup_request) })
 
 def flatten_pickup_request(req):
     if req.updated_location:
@@ -155,6 +155,9 @@ def flatten_pickup_request(req):
         'requestor_name':req.requestor.name,
         'requestor_email':req.requestor.email,
         'requestor_mobile':req.requestor.mobile,
+        'driver_name':req.driver.name,
+        'driver_email':req.driver.email,
+        'driver_mobile':req.driver.mobile,
     }
 
 def flatten_user(user):
