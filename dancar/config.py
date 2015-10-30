@@ -13,6 +13,7 @@ class Config(object):
     USER_ENABLE_CHANGE_USERNAME = False
     USER_ENABLE_LOGIN_WITHOUT_CONFIRM = True
     USER_ENABLE_CONFIRM_EMAIL = False
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 class ProductionConfig(Config):
     DEBUG = False

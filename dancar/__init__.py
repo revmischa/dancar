@@ -6,6 +6,9 @@ import logging
 
 app = Flask(__name__)
 
+# load config
+app.config.from_object('dancar.config.DevelopmentConfig')
+
 # load database
 db = SQLAlchemy(app)
 
@@ -16,9 +19,6 @@ if os.getenv('SQL'):
 
 # load routes
 import dancar.views
-
-# load config
-app.config.from_object('dancar.config.DevelopmentConfig')
 
 # WebSocket support (not really working atm)
 #from flask_sockets import Sockets
