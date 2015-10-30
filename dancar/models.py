@@ -1,6 +1,6 @@
 from geoalchemy2 import Geography
 from geoalchemy2.shape import to_shape
-from . import error, db
+from . import db
 from flask_user import UserMixin
 import datetime
 from sqlalchemy import FetchedValue
