@@ -81,6 +81,7 @@ class WebTestCase(unittest.TestCase):
         assert pickup['request']['use_user_location'] == False, "Use manually-defined pickup location"
         assert pickup['request']['lng'] == lng, "Use manually-defined pickup location"
         assert pickup['request']['lat'] == lat, "Use manually-defined pickup location"
+        assert pickup['request']['requestor_name'] == requestor_user.name, "Correct requestor"
 
         db.session.delete(driver_user)
         db.session.commit()
