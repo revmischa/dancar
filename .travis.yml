@@ -6,6 +6,10 @@ before_script:
 - psql -U postgres -c 'create database dancar with owner travis'
 - psql dancar < schema.sql
 
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -y libgeos-dev
+
 script: make test
 
 after_success: 
