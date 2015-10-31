@@ -123,6 +123,10 @@ def api_request_pickup(car_id):
 
     return jsonify({ 'message': 'Pickup requested', 'pickup': flatten_pickup_request(pickup_request) })
 
+
+#### PICKUPS
+
+# confirm
 @app.route('/api/pickup/<pickup_id>/confirm', methods=['POST'])
 @login_required
 def api_confirm_pickup(pickup_id):
@@ -134,6 +138,7 @@ def api_confirm_pickup(pickup_id):
     pickup.confirm()
     return jsonify({ 'message': 'Pickup confirmed', 'pickup': flatten_pickup_request(pickup) })
 
+# cancel
 @app.route('/api/pickup/<pickup_id>/cancel', methods=['POST'])
 @login_required
 def api_cancel_pickup(pickup_id):
@@ -143,6 +148,7 @@ def api_cancel_pickup(pickup_id):
     pickup.cancel()
     return jsonify({ 'message': 'Pickup cancelled', 'pickup': flatten_pickup_request(pickup) })
 
+# picked up
 @app.route('/api/pickup/<pickup_id>/picked_up', methods=['POST'])
 @login_required
 def api_picked_up_pickup(pickup_id):
@@ -152,6 +158,7 @@ def api_picked_up_pickup(pickup_id):
     pickup.picked_up()
     return jsonify({ 'message': 'Now on your way', 'pickup': flatten_pickup_request(pickup) })
 
+# complete
 @app.route('/api/pickup/<pickup_id>/complete', methods=['POST'])
 @login_required
 def api_complete_pickup(pickup_id):
@@ -160,6 +167,9 @@ def api_complete_pickup(pickup_id):
         return jsonify({ 'message': 'Failed to complete pickup' })
     pickup.complete()
     return jsonify({ 'message': 'Pickup completed', 'pickup': flatten_pickup_request(pickup) })
+
+
+#####
 
 def flatten_pickup_request(req):
     if req.updated_location:

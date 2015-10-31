@@ -32,10 +32,6 @@ COMMENT ON COLUMN "user"."can_pickup" IS E'is capable of giving rides';
 COMMENT ON COLUMN "user"."pickup_enabled" IS E'is giving rides right now';
 COMMENT ON COLUMN "user"."has_pickup" IS E'currently has a passenger';
 
--- CREATE FUNCTION user_available_for_pickup(INTEGER) RETURNS BOOL AS $$
--- BEGIN
---   SE
-
 CREATE VIEW "available_dancars" AS
   SELECT * FROM "user" WHERE
     can_pickup='t' AND pickup_enabled='t' AND has_pickup='f' AND last_pickup_available_start IS NOT NULL AND
@@ -63,7 +59,7 @@ CREATE TABLE "pickup_request" (
 CREATE VIEW "available_pickup_requests" AS
   SELECT * FROM "pickup_request" WHERE
     accepted='f' AND picked_up='f' AND completed='f' AND cancelled='f';
-  
+
 -- real-time location event spewer
 CREATE OR REPLACE FUNCTION update_georeferenced_table() RETURNS TRIGGER AS $$
 DECLARE
@@ -71,8 +67,8 @@ BEGIN
 IF ( (TG_OP = 'INSERT' AND NEW.location IS NOT NULL) OR (TG_OP = 'UPDATE' AND NEW.location IS DISTINCT FROM OLD.location) ) THEN
     NEW.updated_location := current_timestamp;
 END IF;
-PERFORM pg_notify('user_updated', '{"id": ' 
-    || CAST(NEW.id AS text) 
+PERFORM pg_notify(TG_ARGV[0] || '_updated', '{"id": ' 
+    || CAST(NEW.id AS TEXT) 
     || ', "location": '
     || ST_AsGeoJSON(NEW.location)
     || '}'

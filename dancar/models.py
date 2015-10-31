@@ -52,13 +52,11 @@ class PickupBase(GeoReferenced):
 
 class PickupRequest(PickupBase, db.Model):
     __tablename__ = 'pickup_request'
-
     requestor_user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     driver_user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 class AvailblePickupRequests(PickupBase, db.Model):
     __tablename__ = 'available_pickup_requests'
-
     requestor_user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     driver_user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
