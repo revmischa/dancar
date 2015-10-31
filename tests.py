@@ -55,8 +55,8 @@ class WebTestCase(unittest.TestCase):
         # get position
         rv = self.app.get('/api/user/info')
         ret = json.loads(rv.data)
-        assert str(ret.get('lat')) == str(lat), 'Got updated lat'
-        assert str(ret.get('lng')) == str(lng), 'Got updated lng'
+        assert ret.get('lat') == lat, 'Got updated lat'
+        assert ret.get('lng') == lng, 'Got updated lng'
 
     # request a ride
     def test_pickup_request(self):
