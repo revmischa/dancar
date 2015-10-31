@@ -33,14 +33,20 @@ class PickupBase(GeoReferenced):
 
     def confirm(self):
         self.accepted = True
+        self.completed = False
         db.session.commit()
 
     def cancel(self):
         self.completed = True
+        self.cancelled = True
+        db.session.commit()
+
+    def picked_up(self):
+        self.picked_up = True
+        self.completed = False
         db.session.commit()
 
     def complete(self):
-        self.cancelled = True
         self.completed = True
         db.session.commit()
 

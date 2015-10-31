@@ -134,7 +134,7 @@ def api_confirm_pickup(pickup_id):
     pickup.confirm()
     return jsonify({ 'message': 'Pickup confirmed', 'pickup': flatten_pickup_request(pickup) })
 
-@app.route('/api/pickup/<pickup_id>/confirm', methods=['POST'])
+@app.route('/api/pickup/<pickup_id>/cancel', methods=['POST'])
 @login_required
 def api_cancel_pickup(pickup_id):
     pickup = PickupRequest.query.filter(PickupRequest.id == pickup_id).scalar()
@@ -142,6 +142,24 @@ def api_cancel_pickup(pickup_id):
         return jsonify({ 'message': 'Failed to cancel pickup' })
     pickup.cancel()
     return jsonify({ 'message': 'Pickup cancelled', 'pickup': flatten_pickup_request(pickup) })
+
+@app.route('/api/pickup/<pickup_id>/picked_up', methods=['POST'])
+@login_required
+def api_picked_up_pickup(pickup_id):
+    pickup = PickupRequest.query.filter(PickupRequest.id == pickup_id).scalar()
+    if not pickup:
+        return jsonify({ 'message': 'Failed to register pickup' })
+    pickup.picked_up()
+    return jsonify({ 'message': 'Now on your way', 'pickup': flatten_pickup_request(pickup) })
+
+@app.route('/api/pickup/<pickup_id>/complete', methods=['POST'])
+@login_required
+def api_complete_pickup(pickup_id):
+    pickup = PickupRequest.query.filter(PickupRequest.id == pickup_id).scalar()
+    if not pickup:
+        return jsonify({ 'message': 'Failed to complete pickup' })
+    pickup.complete()
+    return jsonify({ 'message': 'Pickup completed', 'pickup': flatten_pickup_request(pickup) })
 
 def flatten_pickup_request(req):
     if req.updated_location:
