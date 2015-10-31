@@ -60,6 +60,10 @@ CREATE TABLE "pickup_request" (
   location_accuracy_meters NUMERIC
 );
 
+CREATE VIEW "available_pickup_requests" AS
+  SELECT * FROM "pickup_request" WHERE
+    accepted='f' AND picked_up='f' AND completed='f' AND cancelled='f';
+  
 -- real-time location event spewer
 CREATE OR REPLACE FUNCTION update_georeferenced_table() RETURNS TRIGGER AS $$
 DECLARE

@@ -84,7 +84,9 @@ class WebTestCase(unittest.TestCase):
         self.assertEquals(pickup['driver_email'], driver_user.email, "Correct driver")
 
         # confirm the pickup. should still be available
-        rv = self.app.post('/api/pickup/confirm/' + str(pickup['id']))
+        rv = self.app.post('/api/pickup/' + str(pickup['id']) + '/confirm')
+        res = json.loads(rv.data)
+        self.assertEquals(res['message'], 'Pickup confirmed', "Confirmed pickup")
 
         db.session.delete(driver_user)
         db.session.commit()

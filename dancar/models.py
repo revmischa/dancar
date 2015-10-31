@@ -22,15 +22,9 @@ class GeoReferenced():
     def lng(self):
         return '0' if self.location is None else str(to_shape(self.location).x)
 
-class PickupRequest(db.Model, GeoReferenced):
-    __tablename__ = 'pickup_request'
-
+class PickupBase(GeoReferenced):
     id = db.Column(db.Integer, primary_key=True)
     created = db.Column(db.DateTime(), server_default=FetchedValue())
-
-    requestor_user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    driver_user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
     accepted = db.Column(db.Boolean(), nullable=False, server_default=FetchedValue())
     picked_up = db.Column(db.Boolean(), nullable=False, server_default=FetchedValue())
     completed = db.Column(db.Boolean(), nullable=False, server_default=FetchedValue())
@@ -49,6 +43,18 @@ class PickupRequest(db.Model, GeoReferenced):
         self.cancelled = True
         self.completed = True
         db.session.commit()
+
+class PickupRequest(PickupBase, db.Model):
+    __tablename__ = 'pickup_request'
+
+    requestor_user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    driver_user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+class AvailblePickupRequests(PickupBase, db.Model):
+    __tablename__ = 'available_pickup_requests'
+
+    requestor_user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    driver_user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 class UserBase(GeoReferenced):
     id = db.Column(db.Integer, primary_key=True)

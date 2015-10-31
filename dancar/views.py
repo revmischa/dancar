@@ -2,7 +2,7 @@
 # This could be futher split up into submodules if the number of endpoints grows too large for one file.
 
 from . import app
-from .models import db, User, AvailableDancars
+from .models import db, User, AvailableDancars, PickupRequest, AvailblePickupRequests
 from flask import abort, jsonify, request, session, render_template as render
 from flask_user import current_user, login_required
 from time import mktime
@@ -122,6 +122,26 @@ def api_request_pickup(car_id):
         db.session.commit()
 
     return jsonify({ 'message': 'Pickup requested', 'pickup': flatten_pickup_request(pickup_request) })
+
+@app.route('/api/pickup/<pickup_id>/confirm', methods=['POST'])
+@login_required
+def api_confirm_pickup(pickup_id):
+    # check view to make sure this is still available 
+    if not AvailblePickupRequests.query.filter(AvailblePickupRequests.id == pickup_id).scalar():
+        return jsonify({ 'message': 'Failed to confirm pickup' })
+    # confirm it
+    pickup = PickupRequest.query.filter(PickupRequest.id == pickup_id).scalar()
+    pickup.confirm()
+    return jsonify({ 'message': 'Pickup confirmed', 'pickup': flatten_pickup_request(pickup) })
+
+@app.route('/api/pickup/<pickup_id>/confirm', methods=['POST'])
+@login_required
+def api_cancel_pickup(pickup_id):
+    pickup = PickupRequest.query.filter(PickupRequest.id == pickup_id).scalar()
+    if not pickup:
+        return jsonify({ 'message': 'Failed to cancel pickup' })
+    pickup.cancel()
+    return jsonify({ 'message': 'Pickup cancelled', 'pickup': flatten_pickup_request(pickup) })
 
 def flatten_pickup_request(req):
     if req.updated_location:
