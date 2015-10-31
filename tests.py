@@ -3,7 +3,7 @@ import dancar
 import unittest
 import random
 import json
-from dancar.models import User, AvailableDancars
+from dancar.models import User, AvailableDancars, PickupRequest, AvailblePickupRequests
 from bs4 import BeautifulSoup
 
 class WebTestCase(unittest.TestCase):
@@ -84,10 +84,19 @@ class WebTestCase(unittest.TestCase):
         self.assertEquals(pickup['driver_email'], driver_user.email, "Correct driver")
 
         # confirm the pickup. should still be available
+        available_pickups = AvailblePickupRequests.query.all()
+        self.assertEquals(len(available_pickups), 1, "Found available pickup request")
         rv = self.app.post('/api/pickup/' + str(pickup['id']) + '/confirm')
         res = json.loads(rv.data)
         self.assertEquals(res['message'], 'Pickup confirmed', "Confirmed pickup")
+        # dancar should still be available
+        dancars = AvailableDancars.query.all()
+        self.assertEquals(len(dancars), 1, "Found dancar driver for pickup")
+        # pickup request should be no longer available
+        available_pickups = AvailblePickupRequests.query.all()
+        self.assertEquals(len(available_pickups), 0, "No available pickup request after confirming")
 
+        PickupRequest.query.delete()
         db.session.delete(driver_user)
         db.session.commit()
 

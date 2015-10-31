@@ -1,7 +1,7 @@
 .PHONY: tests server
 
 test:
-	python tests.py
+	python tests.py -v
 
 run: server
 server:
