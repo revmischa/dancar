@@ -216,6 +216,8 @@ def flatten_user(user):
 
     return {
         'id':user.id,
+        'email':user.email,
+        'mobile':user.mobile,
         'name':user.name,
         'updated_location':update_unixtime,
         'lat':user.lat,

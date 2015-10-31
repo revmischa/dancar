@@ -145,7 +145,7 @@ $.extend(Dancar.prototype, {
 
         if (! user || ! id || ! lng || ! lat) return;
         var marker = this.markers[id];
-        var pos = new google.maps.LatLng(lat, lng);
+        var pos = new google.maps.LatLng(Number(lat), Number(lng));
 
         if (marker) {
             marker.setPosition(pos);
@@ -165,6 +165,12 @@ $.extend(Dancar.prototype, {
             
             $win.append($("<div/>").text(user.name));
             $win.append($("<div/>").text($.timeago(updatedDate)));
+            $win.append($("<button class='btn'/>").text('Summon'));
+            if (user.mobile) {
+                $callBtn = $("<a/>").attr("href", "tel://" + user.mobile);
+                $callBtn.append($("<button class='btn'/>").text('Call'));
+                $win.append($callBtn);
+            }
             var win = new google.maps.InfoWindow({
                 'content': $win.get(0)
             });

@@ -63,7 +63,7 @@ Reopen your terminal
 ```
 createdb dancar
 echo "CREATE EXTENSION postgis" | psql dancar
-psql dancar < schema.sql
+make init-schema
 ```
 
 ### Grab python modules
@@ -77,7 +77,7 @@ python runserver.py
 And you should be good to go. 
  
 ## Try it out
-`make server` 
-`make test` 
+`make server`   
+`make test`   
 View the DanH user map, then run `python util/update_pos.py` to update the DanCar with random coordinates.
 
