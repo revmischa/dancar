@@ -155,7 +155,7 @@ def api_picked_up_pickup(pickup_id):
     pickup = PickupRequest.query.filter(PickupRequest.id == pickup_id).scalar()
     if not pickup:
         return jsonify({ 'message': 'Failed to register pickup' })
-    pickup.picked_up()
+    pickup.pickup()
     return jsonify({ 'message': 'Now on your way', 'pickup': flatten_pickup_request(pickup) })
 
 # complete
