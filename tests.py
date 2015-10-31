@@ -69,32 +69,32 @@ class WebTestCase(unittest.TestCase):
 
         # list available drivers
         dancars = AvailableDancars.query.all()
-        self.assertEquals(len(dancars), 1, "Found dancar driver for pickup")
+        assert len(dancars) == 1, "Found dancar driver for pickup"
         car = dancars[0]
 
         # request a pickup
         lng, lat = self.random_lng_lat()
         rv = self.app.post('/api/car/request_pickup/' + str(car.id), data=dict(lng=lng, lat=lat))
-        self.assertEquals(rv.status_code, 200, "Requested pickup")
+        assert rv.status_code == 200, "Requested pickup"
         pickup = json.loads(rv.data)['pickup']
-        self.assertEquals(pickup['use_user_location'], False, "Use manually-defined pickup location")
-        self.assertEquals(pickup['lng'], lng, "Use manually-defined pickup location")
-        self.assertEquals(pickup['lat'], lat, "Use manually-defined pickup location")
-        self.assertEquals(pickup['requestor_email'], 'test@test.com', "Correct requestor")
-        self.assertEquals(pickup['driver_email'], driver_user.email, "Correct driver")
+        assert pickup['use_user_location'] == False, "Use manually-defined pickup location"
+        assert pickup['lng'] == lng, "Use manually-defined pickup location"
+        assert pickup['lat'] == lat, "Use manually-defined pickup location"
+        assert pickup['requestor_email'] == 'test@test.com', "Correct requestor"
+        assert pickup['driver_email'] == driver_user.email, "Correct driver"
 
         # confirm the pickup. should still be available
         available_pickups = AvailblePickupRequests.query.all()
-        self.assertEquals(len(available_pickups), 1, "Found available pickup request")
+        assert len(available_pickups) == 1, "Found available pickup request"
         rv = self.app.post('/api/pickup/' + str(pickup['id']) + '/confirm')
         res = json.loads(rv.data)
-        self.assertEquals(res['message'], 'Pickup confirmed', "Confirmed pickup")
+        assert res['message'] == 'Pickup confirmed', "Confirmed pickup"
         # dancar should still be available
         dancars = AvailableDancars.query.all()
-        self.assertEquals(len(dancars), 1, "Found dancar driver for pickup")
+        assert len(dancars) == 1, "Found dancar driver for pickup"
         # pickup request should be no longer available
         available_pickups = AvailblePickupRequests.query.all()
-        self.assertEquals(len(available_pickups), 0, "No available pickup request after confirming")
+        assert len(available_pickups) == 0, "No available pickup request after confirming"
 
         PickupRequest.query.delete()
         db.session.delete(driver_user)
