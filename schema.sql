@@ -63,11 +63,13 @@ CREATE VIEW "available_pickup_requests" AS
 -- real-time location event spewer
 CREATE OR REPLACE FUNCTION update_georeferenced_table() RETURNS TRIGGER AS $$
 DECLARE
+  name TEXT;
 BEGIN
+name := TG_ARGV[0];
 IF ( (TG_OP = 'INSERT' AND NEW.location IS NOT NULL) OR (TG_OP = 'UPDATE' AND NEW.location IS DISTINCT FROM OLD.location) ) THEN
     NEW.updated_location := current_timestamp;
 END IF;
-PERFORM pg_notify(TG_ARGV[0] || '_updated', '{"id": ' 
+PERFORM pg_notify(name || '_updated', '{"id": ' 
     || CAST(NEW.id AS TEXT) 
     || ', "location": '
     || ST_AsGeoJSON(NEW.location)
@@ -81,9 +83,9 @@ COMMENT ON FUNCTION update_georeferenced_table() IS E'When a table\'s location i
 
 DROP TRIGGER IF EXISTS "user_update_notify" ON "user";
 CREATE TRIGGER user_update_notify BEFORE UPDATE OR INSERT
-    ON "user" FOR EACH ROW EXECUTE PROCEDURE update_georeferenced_table();
+    ON "user" FOR EACH ROW EXECUTE PROCEDURE update_georeferenced_table('user');
 
 DROP TRIGGER IF EXISTS "pickup_update_notify" ON "pickup_request";
 CREATE TRIGGER pickup_update_notify BEFORE UPDATE OR INSERT
-    ON "pickup_request" FOR EACH ROW EXECUTE PROCEDURE update_georeferenced_table();
+    ON "pickup_request" FOR EACH ROW EXECUTE PROCEDURE update_georeferenced_table('pickup_request');
 
