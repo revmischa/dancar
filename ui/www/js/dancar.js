@@ -8,16 +8,16 @@ var Dancar = function() {
     this.loggedIn  = false;
     this.map       = undefined;
     this.markers   = {};
-    this.apiHost   = "https://dancar.herokuapp.com";
+    this.apiHost   = "http://localhost:5000";
+    // this.apiHost   = "https://dancar.herokuapp.com";
 };
 
 $.extend(Dancar.prototype, {
     initClient: function() {
         status("Initializing DanCar...");
         this.bindEvents();
-        this.dc = new Dancar();
-        this.dc.initializeMap();
-        this.dc.initializeGeolocating(this.positionUpdated.bind(this), this.positionError.bind(this));
+        this.initializeMap();
+        this.initializeGeolocating(this.positionUpdated.bind(this), this.positionError.bind(this));
         this.updateLoginStatus();
         window.setInterval(this.updateLoginStatus.bind(this), 5000);
         window.setInterval(this.updateUserMap.bind(this), 2000);
@@ -51,24 +51,25 @@ $.extend(Dancar.prototype, {
         $(".client .error.alert").text(errStr).fadeIn();
     },
 
-    loggedIn: function() {
+    loggedInEvent: function() {
         $(".client .not-logged-in").hide();
         $(".client .logged-in").fadeIn();
     },
 
-    notLoggedIn: function() {
+    notLoggedInEvent: function() {
         $(".client .logged-in").hide();
         $(".client .not-logged-in").fadeIn();            
     },
 
     updateLoginStatus: function() {
-        var isLoggedIn = this.dc.loggedIn;
-        this.dc.getUserInfo(function(res) {
+        var isLoggedIn = this.loggedIn;
+        var self = this;
+        this.getUserInfo(function(res) {
             if (isLoggedIn && res === false) {
-                notLoggedIn();
+                self.notLoggedInEvent();
             } else if (! isLoggedIn && res) {
-                loggedIn();
-                updateUserMap();
+                self.loggedInEvent();
+                self.updateUserMap();
             }
         });
     },
@@ -201,8 +202,8 @@ $.extend(Dancar.prototype, {
             mapId = 'map-canvas';
 
         var mapOptions = {
-            zoom: 14,
-            center: new google.maps.LatLng(37.88, -122.26),
+            zoom: 13,
+            center: new google.maps.LatLng(37.79, -122.41),
             mapTypeId: google.maps.MapTypeId.HYBRID
         };
         this.map = new google.maps.Map(document.getElementById(mapId), mapOptions);
@@ -213,12 +214,10 @@ $.extend(Dancar.prototype, {
         if (! this.map) return;
 
         var id = user.id + "";
-        var lng = user.lng;
-        var lat = user.lat;
+        var pos = this.getUserPoint(user);
 
-        if (! user || ! id || ! lng || ! lat) return;
+        if (! user || ! id || ! pos) return;
         var marker = this.markers[id];
-        var pos = new google.maps.LatLng(Number(lat), Number(lng));
 
         if (marker) {
             marker.setPosition(pos);
@@ -228,7 +227,8 @@ $.extend(Dancar.prototype, {
                 'map': this.map,
                 'position': pos,
                 'draggable': false,
-                'title': user.name
+                'title': user.name,
+                'animation': google.maps.Animation.DROP,
             });
             this.markers[id] = marker;
 
@@ -251,6 +251,15 @@ $.extend(Dancar.prototype, {
             this.map.panTo(pos);
             this.map.setZoom(18);
         }
+    },
+
+    getUserPoint: function(user) {
+        var lng = user.lng;
+        var lat = user.lat;
+
+        if (! user || ! lng || ! lat) return;
+        var pos = new google.maps.LatLng(Number(lat), Number(lng));
+        return pos;
     }
 });
 

@@ -30,14 +30,10 @@
 * Magic happens in user.location update trigger, see [`schema.sql`](schema.sql)
 
 ## Tasks:
-* Android client
-* iOS client
-* Web client
-* WebSocket push event support, falling back to poll-based location update
+* Cordova/PhoneGap interface
 * ~~Poll-based location updating~~ done
 * ~~User registration / login with Flask-User~~ done
 * Notification system to inform users of Dancar status, and inform Dancar driver of pickup requests
-* Cooler interface
 * Cooler map markers
 
 
@@ -54,7 +50,7 @@ createdb dancar
 ### (OSX)
 Install [postgres.app](http://postgresapp.com/)
 ```
-echo "export PATH=/Applications/Postgres.app/Contents/Versions/9.4/bin/:$PATH" >> ~/.profile
+echo "export PATH=/Applications/Postgres.app/Contents/Versions/9.5/bin/:$PATH" >> ~/.profile
 echo "export PGHOST=localhost" >> ~/.profile
 ```
 Reopen your terminal

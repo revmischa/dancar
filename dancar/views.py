@@ -3,7 +3,7 @@
 
 from . import app
 from .models import db, User, AvailableDancars, PickupRequest, AvailblePickupRequests
-from flask import abort, jsonify, request, session, render_template as render
+from flask import abort, jsonify, request, session, redirect, render_template as render
 from flask_user import current_user, login_required
 from time import mktime
 from flask.ext.login import login_user 
@@ -11,7 +11,7 @@ from flask.ext.login import login_user
 # home
 @app.route('/')
 def index():
-    return render('index.html')
+    return redirect('/static/index.html')
 
 # view all users
 @app.route('/user/list')
