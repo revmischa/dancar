@@ -1,3 +1,90 @@
+var app = {
+    // Application Constructor
+    initialize: function() {
+        this.bindEvents();
+        this.initClient();
+    },
+
+    initClient: function() {
+        status("Initializing DanCar...");
+        this.dc = new Dancar();
+        this.dc.initializeMap();
+        this.dc.initializeGeolocating(positionUpdated, positionError);
+        updateLoginStatus();
+        window.setInterval(updateLoginStatus, 5000);
+        window.setInterval(updateUserMap, 2000);
+    },
+    // Bind Event Listeners
+    //
+    // Bind any events that are required on startup. Common events are:
+    // 'load', 'deviceready', 'offline', and 'online'.
+    bindEvents: function() {
+        document.addEventListener('deviceready', this.onDeviceReady, false);
+    },
+    // deviceready Event Handler
+    //
+    // The scope of 'this' is the event. In order to call the 'receivedEvent'
+    // function, we must explicitly call 'app.receivedEvent(...);'
+    onDeviceReady: function() {
+        app.receivedEvent('deviceready');
+    },
+    // Update DOM on a Received Event
+    receivedEvent: function(id) {
+        var parentElement = document.getElementById(id);
+        var listeningElement = parentElement.querySelector('.listening');
+        var receivedElement = parentElement.querySelector('.received');
+
+        listeningElement.setAttribute('style', 'display:none;');
+        receivedElement.setAttribute('style', 'display:block;');
+
+        console.log('Received Event: ' + id);
+    },
+
+    // got updated coordinates
+    positionUpdated: function(position) {
+        $(".client .error.alert").hide();
+        status("Position updated: " + position.coords.longitude + ", " + position.coords.latitude);
+    },
+
+    positionError: function(errStr) {
+        $(".client .error.alert").text(errStr).fadeIn();
+    },
+
+    loggedIn: function() {
+        $(".client .not-logged-in").hide();
+        $(".client .logged-in").fadeIn();
+    },
+
+    notLoggedIn: function() {
+        $(".client .logged-in").hide();
+        $(".client .not-logged-in").fadeIn();            
+    },
+
+    updateLoginStatus: function() {
+        var isLoggedIn = this.dc.loggedIn;
+        this.dc.getUserInfo(function(res) {
+            if (isLoggedIn && res === false) {
+                notLoggedIn();
+            } else if (! isLoggedIn && res) {
+                loggedIn();
+                updateUserMap();
+            }
+        });
+    },
+
+    updateUserMap: function() {
+        this.dc.updateUserMap();
+    }
+};
+
+app.initialize();
+
+/*********************************/
+
+status: function(msg) {
+    $(".client .status.alert").text(msg).fadeIn();
+},
+
 var Dancar = function() {
     this.longitude = undefined;
     this.latitude  = undefined;
@@ -142,6 +229,7 @@ $.extend(Dancar.prototype, {
         var id = user.id + "";
         var lng = user.lng;
         var lat = user.lat;
+        console.log(Number(lat) + " + " + Number(lng));
 
         if (! user || ! id || ! lng || ! lat) return;
         var marker = this.markers[id];

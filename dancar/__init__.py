@@ -3,8 +3,9 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask_user import login_required, UserManager, UserMixin, SQLAlchemyAdapter
 import os
 import logging
+from flask.ext.cors import CORS
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="../ui/www", static_url_path="/static")
 
 # load config
 app.config.from_object('dancar.config.DevelopmentConfig')
@@ -45,7 +46,13 @@ if app.config.get('DEVELOPMENT'):
         db.session.commit()
         print " * You can log in with test@test.com/test"
 
-# Catch error and return back a flask response
-# @app.errorhandler(error)
-# def catchError(er) :
-#     return err.message , err.code , err.headers
+# logging.getLogger('flask_cors').setLevel(logging.DEBUG)
+# CORS
+resources = [ r"/api/.*", r"/oauth/.*" ]
+if app.config.get('CORS_ENABLED'):
+    origins = app.config.get('CORS_ORIGINS')
+    if origins:
+        origins = origins.split(" ")
+        CORS(app, resources=resources, origins=origins, supports_credentials=True)
+    else:
+        CORS(app, resources=resources, origins="*")
