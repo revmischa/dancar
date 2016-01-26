@@ -1,14 +1,25 @@
+from sqlalchemy import FetchedValue, Column, DateTime, Numeric, Integer, Boolean, String, ForeignKey, Interval
 from geoalchemy2 import Geography
-from geoalchemy2.shape import to_shape
-from . import db
+from geoalchemy2.functions import ST_AsGeoJSON
+import sqlalchemy.types as types
 from flask_user import UserMixin
+from . import db
 import datetime
-from sqlalchemy import FetchedValue
+import json
+
+class PointGeography(types.UserDefinedType):
+    impl = Geography
+
+    def get_col_spec(self):
+        return "GEOMETRY"
+
+    def column_expression(self, col):
+        return ST_AsGeoJSON(col, type_=self)
 
 class GeoReferenced():
-    updated_location = db.Column(db.DateTime())
-    location_accuracy_meters = db.Column(db.Numeric(asdecimal=False))
-    location = db.Column(Geography(geometry_type='POINT', srid=4326))
+    updated_location = Column(DateTime())
+    location_accuracy_meters = Column(Numeric(asdecimal=False))
+    location = Column(PointGeography)
 
     def set_location(self, lng, lat):
         self.location = "POINT(%0.16f %0.16f)" % (float(lng), float(lat))
@@ -16,20 +27,30 @@ class GeoReferenced():
 
     @property
     def lat(self):
-        return '0' if self.location is None else str(to_shape(self.location).y)
+        if self.location is None:
+            return None 
+        return parse_point(self.location)[1]
+        # return None if self.location is None else str(to_shape(self.location).y)
 
     @property
     def lng(self):
-        return '0' if self.location is None else str(to_shape(self.location).x)
+        if self.location is None:
+            return None 
+        return parse_point(self.location)[0]
+        # return None if self.location is None else str(to_shape(self.location).x)
+
+def parse_point(point):
+    geo = json.loads(point)
+    return geo['coordinates']
 
 class PickupBase(GeoReferenced):
-    id = db.Column(db.Integer, primary_key=True)
-    created = db.Column(db.DateTime(), server_default=FetchedValue())
-    accepted = db.Column(db.Boolean(), nullable=False, server_default=FetchedValue())
-    picked_up = db.Column(db.Boolean(), nullable=False, server_default=FetchedValue())
-    completed = db.Column(db.Boolean(), nullable=False, server_default=FetchedValue())
-    cancelled = db.Column(db.Boolean(), nullable=False, server_default=FetchedValue())
-    use_user_location = db.Column(db.Boolean(), nullable=False, server_default=FetchedValue())
+    id = Column(Integer, primary_key=True)
+    created = Column(DateTime(), server_default=FetchedValue())
+    accepted = Column(Boolean(), nullable=False, server_default=FetchedValue())
+    picked_up = Column(Boolean(), nullable=False, server_default=FetchedValue())
+    completed = Column(Boolean(), nullable=False, server_default=FetchedValue())
+    cancelled = Column(Boolean(), nullable=False, server_default=FetchedValue())
+    use_user_location = Column(Boolean(), nullable=False, server_default=FetchedValue())
 
     def confirm(self):
         self.accepted = True
@@ -52,30 +73,30 @@ class PickupBase(GeoReferenced):
 
 class PickupRequest(PickupBase, db.Model):
     __tablename__ = 'pickup_request'
-    requestor_user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    driver_user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    requestor_user_id = Column(Integer, ForeignKey('user.id'))
+    driver_user_id = Column(Integer, ForeignKey('user.id'))
 
 class AvailblePickupRequests(PickupBase, db.Model):
     __tablename__ = 'available_pickup_requests'
-    requestor_user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    driver_user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    requestor_user_id = Column(Integer, ForeignKey('user.id'))
+    driver_user_id = Column(Integer, ForeignKey('user.id'))
 
 class UserBase(GeoReferenced):
-    id = db.Column(db.Integer, primary_key=True)
-    created = db.Column(db.DateTime(), server_default=FetchedValue())
+    id = Column(Integer, primary_key=True)
+    created = Column(DateTime(), server_default=FetchedValue())
 
-    name = db.Column(db.String())
-    email = db.Column(db.String(), nullable=False, unique=True)
-    mobile = db.Column(db.String(), nullable=False, unique=True)
-    password = db.Column(db.String(), nullable=False, server_default=FetchedValue())
-    reset_password_token = db.Column(db.String(), nullable=False, server_default=FetchedValue())
-    active = db.Column('is_active', db.Boolean(), nullable=False, server_default=FetchedValue())
+    name = Column(String())
+    email = Column(String(), nullable=False, unique=True)
+    mobile = Column(String(), nullable=False, unique=True)
+    password = Column(String(), nullable=False, server_default=FetchedValue())
+    reset_password_token = Column(String(), nullable=False, server_default=FetchedValue())
+    active = Column('is_active', Boolean(), nullable=False, server_default=FetchedValue())
 
-    can_pickup = db.Column('can_pickup', db.Boolean(), nullable=False, server_default=FetchedValue())
-    has_pickup = db.Column('has_pickup', db.Boolean(), nullable=False, server_default=FetchedValue())
-    pickup_enabled = db.Column('pickup_enabled', db.Boolean(), nullable=False, server_default=FetchedValue())
-    last_pickup_available_start = db.Column('last_pickup_available_start', db.DateTime(), server_default=FetchedValue())
-    last_pickup_available_duration = db.Column('last_pickup_available_duration', db.Interval(), server_default=FetchedValue())
+    can_pickup = Column('can_pickup', Boolean(), nullable=False, server_default=FetchedValue())
+    has_pickup = Column('has_pickup', Boolean(), nullable=False, server_default=FetchedValue())
+    pickup_enabled = Column('pickup_enabled', Boolean(), nullable=False, server_default=FetchedValue())
+    last_pickup_available_start = Column('last_pickup_available_start', DateTime(), server_default=FetchedValue())
+    last_pickup_available_duration = Column('last_pickup_available_duration', Interval(), server_default=FetchedValue())
 
     def __repr__(self):
         return '<user id=%r email=%r>' % (self.id, self.email)

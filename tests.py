@@ -30,32 +30,18 @@ class WebTestCase(unittest.TestCase):
     def logout_web(self):
         return self.app.get('/user/sign-out', follow_redirects=True)
 
-    # def test_web_login_logout(self):
-    #     # login
-    #     rv = self.login_web('test@test.com', 'test')
-    #     assert 'You have signed in successfully' in rv.data
-    #     # logout
-    #     rv = self.logout_web()
-    #     assert 'You have signed out successfully' in rv.data
-    #     # invalid username
-    #     rv = self.login_web('bogus', 'default')
-    #     assert 'Invalid Email' in rv.data
-    #     # invalid password
-    #     rv = self.login_web('test@test.com', 'defaultx')
-    #     assert 'Incorrect Password' in rv.data
-
     def test_api_location_client(self):
         # test logging in and updating and retrieving the user's position
         rv = self.login_web('test@test.com', 'test')
         # update position
         lng, lat = self.random_lng_lat()
         rv = self.app.post('/api/user/update', data=dict(lng=lng, lat=lat))
-        assert 'Location updated' in rv.data
+        self.assertIn('Location updated', rv.data, "Did not get location update message after /api/user/update")
         # get position
         rv = self.app.get('/api/user/info')
         ret = json.loads(rv.data)
-        assert ret.get('lat') == lat, 'Got updated lat'
-        assert ret.get('lng') == lng, 'Got updated lng'
+        self.assertEquals(str(ret.get('lat')), str(lat), 'Updated lat value did not save. Got %s expected %s' % (ret.get('lat'), lat))
+        self.assertEquals(str(ret.get('lng')), str(lng), 'Updated lng value did not save')
 
     # request a ride
     def test_pickup_request(self):
@@ -68,32 +54,32 @@ class WebTestCase(unittest.TestCase):
 
         # list available drivers
         dancars = AvailableDancars.query.all()
-        assert len(dancars) == 1, "Found dancar driver for pickup"
+        self.assertEquals(len(dancars), 1, "Did not find expected number of dancar drivers for pickup")
         car = dancars[0]
 
         # request a pickup
         lng, lat = self.random_lng_lat()
         rv = self.app.post('/api/car/request_pickup/' + str(car.id), data=dict(lng=lng, lat=lat))
-        assert rv.status_code == 200, "Requested pickup"
+        self.assertEquals(rv.status_code, 200, "Did not get OK status from pickup request API")
         pickup = json.loads(rv.data)['pickup']
-        assert pickup['use_user_location'] == False, "Use manually-defined pickup location"
-        assert pickup['lng'] == lng, "Use manually-defined pickup location"
-        assert pickup['lat'] == lat, "Use manually-defined pickup location"
-        assert pickup['requestor_email'] == 'test@test.com', "Correct requestor"
-        assert pickup['driver_email'] == driver_user.email, "Correct driver"
+        self.assertFalse(pickup['use_user_location'], "Failed to specify manually-defined pickup location")
+        self.assertEquals(str(pickup['lng']), str(lng), "Did not use manually-defined pickup location")
+        self.assertEquals(str(pickup['lat']), str(lat), "Did not use manually-defined pickup location")
+        self.assertEquals(pickup['requestor_email'], 'test@test.com', "Got incorrect pickup requestor email")
+        self.assertEquals(pickup['driver_email'], driver_user.email, "Got incorrect pickup driver email")
 
         # confirm the pickup. should still be available
         available_pickups = AvailblePickupRequests.query.all()
-        assert len(available_pickups) == 1, "Found available pickup request"
+        self.assertEquals(len(available_pickups), 1, "Did not find available pickup request")
         rv = self.app.post('/api/pickup/' + str(pickup['id']) + '/confirm')
         res = json.loads(rv.data)
-        assert res['message'] == 'Pickup confirmed', "Confirmed pickup"
+        self.assertEquals(res['message'], 'Pickup confirmed', "Did not get confirmed pickup message")
         # dancar should still be available
         dancars = AvailableDancars.query.all()
-        assert len(dancars) == 1, "Found dancar driver for pickup"
+        self.assertEquals(len(dancars), 1, "Did not find dancar driver for pickup")
         # pickup request should be no longer available
         available_pickups = AvailblePickupRequests.query.all()
-        assert len(available_pickups) == 0, "No available pickup request after confirming"
+        self.assertEquals(len(available_pickups), 0, "Still found pickup request after confirming")
 
         PickupRequest.query.delete()
         db.session.delete(driver_user)
@@ -125,13 +111,13 @@ class WebTestCase(unittest.TestCase):
         return u        
 
     def test_api_login(self):
-        assert self.login_api('test@test.com', 'test') is True, 'Logged in via API'
-        assert self.login_api('test@test.com', 'not') is False, 'Failed login via API with invalid password'
+        self.assertTrue(self.login_api('test@test.com', 'test'), 'Failed to log in via API')
+        self.assertFalse(self.login_api('test@test.com', 'not'), 'Did not fail login via API with invalid password')
 
     def random_lng_lat(self):
         lng = -122.25874046835327 + (random.random()-0.5)/100
         lat = 37.87556521891249 + (random.random()-0.5)/100
-        return str(lng), str(lat)
+        return lng, lat
 
 if __name__ == '__main__':
     unittest.main()
