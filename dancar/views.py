@@ -12,7 +12,7 @@ from functools import wraps
 def api_login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if current_user is None or not current_user.is_authenticated() or not current_user.is_active() or current_user.is_anonymous():
+        if current_user is None or not current_user.is_authenticated() or not current_user.is_active or current_user.is_anonymous():
             return jsonify({'needs_login': True}), 401
         return f(*args, **kwargs)
     return decorated_function
