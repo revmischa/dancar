@@ -8,8 +8,8 @@ var Dancar = function() {
     this.loggedIn  = false;
     this.map       = undefined;
     this.markers   = {};
-    this.apiHost   = "http://localhost:5000";
-    // this.apiHost   = "https://dancar.herokuapp.com";
+    // this.apiHost   = "http://localhost:5000";
+    this.apiHost   = "https://dancar.herokuapp.com";
 };
 
 $.extend(Dancar.prototype, {
