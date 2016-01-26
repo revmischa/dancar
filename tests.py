@@ -3,17 +3,22 @@ import dancar
 import unittest
 import random
 import json
-from dancar.models import User, AvailableDancars, PickupRequest, AvailblePickupRequests
 from bs4 import BeautifulSoup
+from dancar.models import User, AvailableDancars, PickupRequest, AvailblePickupRequests
 
 class WebTestCase(unittest.TestCase):
     def setUp(self):
         self.app = dancar.app.test_client()
-        self.db = dancar.db
-        dancar.app.config['CSRF_ENABLED'] = False
-        # if self.app.config['TESTING']:
-        #     print "Creating database"
+        self.session = dancar.db.session
+        self.entities = []
 
+    def tearDown(self):
+        for entity in self.entities:
+            self.session.delete(entity)
+        self.session.commit()
+
+    def get_test_user(self):
+        return User.query.filter(User.email == 'test@test.com').scalar()
 
     def login_web(self, username, password):
         # get CSRF token
@@ -31,6 +36,10 @@ class WebTestCase(unittest.TestCase):
         return self.app.get('/user/sign-out', follow_redirects=True)
 
     def test_api_location_client(self):
+        user = self.get_test_user()
+        user.updated_location = None
+        self.session.commit()
+
         # test logging in and updating and retrieving the user's position
         rv = self.login_web('test@test.com', 'test')
         # update position
@@ -43,9 +52,11 @@ class WebTestCase(unittest.TestCase):
         self.assertEquals(str(ret.get('lat')), str(lat), 'Updated lat value did not save. Got %s expected %s' % (ret.get('lat'), lat))
         self.assertEquals(str(ret.get('lng')), str(lng), 'Updated lng value did not save')
 
+        user = self.get_test_user()
+        self.assertTrue(user.updated_location, "user.updated_location is not set after updating user's location via API")
+
     # request a ride
     def test_pickup_request(self):
-        db = self.db
         rv = self.login_web('test@test.com', 'test')
 
         # create driver user
@@ -82,8 +93,8 @@ class WebTestCase(unittest.TestCase):
         self.assertEquals(len(available_pickups), 0, "Still found pickup request after confirming")
 
         PickupRequest.query.delete()
-        db.session.delete(driver_user)
-        db.session.commit()
+        self.session.delete(driver_user)
+        self.session.commit()
 
     def login_api(self, email, password):
         endpoint = '/api/login'
@@ -102,8 +113,9 @@ class WebTestCase(unittest.TestCase):
         u.password = 'x'
         u.reset_password_token = 'x'
         u.mobile = '+1 555 555-6655'
-        self.db.session.add(u)
-        self.db.session.commit()
+
+        self.session.add(u)
+        self.session.commit()
 
         lng, lat = self.random_lng_lat()
         u.set_location(lng, lat)

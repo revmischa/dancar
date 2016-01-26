@@ -3,13 +3,11 @@ from geoalchemy2 import Geography
 from geoalchemy2.functions import ST_AsGeoJSON
 import sqlalchemy.types as types
 from flask_user import UserMixin
-from . import db
+from dancar import db
 import datetime
 import json
 
 class PointGeography(types.UserDefinedType):
-    impl = Geography
-
     def get_col_spec(self):
         return "GEOMETRY"
 
@@ -22,7 +20,10 @@ class GeoReferenced():
     location = Column(PointGeography)
 
     def set_location(self, lng, lat):
-        self.location = "POINT(%0.16f %0.16f)" % (float(lng), float(lat))
+        if lat is None or lng is None:
+            self.location = None
+        else:
+            self.location = "POINT(%0.16f %0.16f)" % (float(lng), float(lat))
         db.session.commit()
 
     @property

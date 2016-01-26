@@ -1,7 +1,7 @@
 # Importing this module will bind routes to the app.
 # This could be futher split up into submodules if the number of endpoints grows too large for one file.
 
-from . import app
+from dancar import app
 from .models import db, User, AvailableDancars, PickupRequest, AvailblePickupRequests
 from flask import abort, jsonify, request, session, redirect, render_template as render
 from flask_user import current_user, login_required
