@@ -15,30 +15,11 @@ var Dancar = function() {
 $.extend(Dancar.prototype, {
     initClient: function() {
         status("Initializing DanCar...");
-        this.bindEvents();
         this.initializeMap();
         this.initializeGeolocating(this.positionUpdated.bind(this), this.positionError.bind(this));
         this.updateLoginStatus();
         window.setInterval(this.updateLoginStatus.bind(this), 5000);
         window.setInterval(this.updateUserMap.bind(this), 2000);
-    },
-    // deviceready Event Handler
-    //
-    // The scope of 'this' is the event. In order to call the 'receivedEvent'
-    // function, we must explicitly call 'app.receivedEvent(...);'
-    onDeviceReady: function() {
-        app.receivedEvent('deviceready');
-    },
-    // Update DOM on a Received Event
-    receivedEvent: function(id) {
-        var parentElement = document.getElementById(id);
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
-
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
-
-        console.log('Received Event: ' + id);
     },
 
     // got updated coordinates
@@ -52,13 +33,13 @@ $.extend(Dancar.prototype, {
     },
 
     loggedInEvent: function() {
-        $(".client .not-logged-in").hide();
-        $(".client .logged-in").fadeIn();
+        $(".app .not-logged-in").hide();
+        $(".app .logged-in").fadeIn();
     },
 
     notLoggedInEvent: function() {
-        $(".client .logged-in").hide();
-        $(".client .not-logged-in").fadeIn();            
+        $(".app .logged-in").hide();
+        $(".app .not-logged-in").fadeIn();            
     },
 
     updateLoginStatus: function() {
@@ -72,13 +53,6 @@ $.extend(Dancar.prototype, {
                 self.updateUserMap();
             }
         });
-    },
-
-    //
-    // Bind any events that are required on startup. Common events are:
-    // 'load', 'deviceready', 'offline', and 'online'.
-    bindEvents: function() {
-        document.addEventListener('deviceready', this.onDeviceReady, false);
     },
 
     // checks to see if user is logged in and calls cb
@@ -100,27 +74,6 @@ $.extend(Dancar.prototype, {
             // logged in
             self.loggedIn = true;
             cb(info);
-        });
-    },
-
-    // call to fetch all user locations and update the map markers
-    updateUserMap: function() {
-        var self = this;
-
-        if (! this.map) return;
-        if (! this.loggedIn) return;
-
-        $.get(this.apiHost + '/api/user/all', function(res) {
-            if (! res || ! res.users) {
-                console.log("Did not get successful /api/user/all response");
-                return;
-            }
-
-            var users = res.users;
-            for (i in users) {
-                var user = users[i];
-                self.updateMarker(user);
-            }
         });
     },
 
@@ -248,9 +201,39 @@ $.extend(Dancar.prototype, {
                 'content': $win.get(0)
             });
             win.open(this.map, marker);
-            this.map.panTo(pos);
-            this.map.setZoom(18);
+            // this.map.panTo(pos);
+            // this.map.setZoom(18);
         }
+    },
+
+    // call to fetch all user locations and update the map markers
+    updateUserMap: function() {
+        if (! this.map) return;
+        if (! this.loggedIn) return;
+
+        $.get(this.apiHost + '/api/user/all', (res) => {
+            if (! res || ! res.users) {
+                console.log("Did not get successful /api/user/all response");
+                status("Failed to load DanCar users")
+                return;
+            }
+
+            var users = res.users;
+            var bounds = new google.maps.LatLngBounds();
+            for (i in users) {
+                var user = users[i];
+                this.updateMarker(user);
+                var point = this.getUserPoint(user);
+                if (point)
+                    bounds.extend(point);
+            }
+
+            if (! this.hasSetMapBounds && bounds) {
+                // position map so all dancars are visible
+                this.hasSetMapBounds = true;
+                this.map.panToBounds(bounds);
+            }
+        });
     },
 
     getUserPoint: function(user) {

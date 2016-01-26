@@ -8,7 +8,7 @@ from sqlalchemy import FetchedValue
 class GeoReferenced():
     updated_location = db.Column(db.DateTime())
     location_accuracy_meters = db.Column(db.Numeric(asdecimal=False))
-    location = db.Column(Geography)
+    location = db.Column(Geography(geometry_type='POINT', srid=4326))
 
     def set_location(self, lng, lat):
         self.location = "POINT(%0.16f %0.16f)" % (float(lng), float(lat))
