@@ -7,6 +7,7 @@ from flask import abort, jsonify, request, session, redirect, render_template as
 from flask_user import current_user, login_required
 from time import mktime
 from flask.ext.login import login_user 
+from functools import wraps
 
 def api_login_required(f):
     @wraps(f)
