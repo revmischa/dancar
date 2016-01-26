@@ -8,33 +8,22 @@ from flask_user import current_user, login_required
 from time import mktime
 from flask.ext.login import login_user 
 
+def api_login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if current_user is None or not current_user.is_authenticated() or not current_user.is_active() or current_user.is_anonymous():
+            return jsonify({'needs_login': True}), 401
+        return f(*args, **kwargs)
+    return decorated_function
+
 # home
 @app.route('/')
 def index():
     return redirect('/static/index.html')
 
-# view all users
-@app.route('/user/list')
-@login_required
-def user_list():
-    return render('users.html', users=User.query.all())
-
-# view a user's status
-# (should have some security on this)
-@app.route('/user/<uid>')
-@login_required
-def user_view(uid):
-    return render('view_user.html', user=User.query.get(uid))
-
-# view myself
-@app.route('/user/me')
-@login_required
-def user_view_me():
-    return render('map.view_user', user=current_user)
-
 # update my position
 @app.route('/api/user/update', methods=['POST'])
-@login_required
+@api_login_required
 def user_update():
     current_user.set_location(request.form['lng'],request.form['lat'])
     if 'location_accuracy_meters' in request.form:
@@ -44,18 +33,13 @@ def user_update():
 
 # get my user info
 @app.route('/api/user/info', methods=['GET'])
+@api_login_required
 def api_user():
-    user = current_user
-    if not user:
-        return jsonify({
-            'id': None
-        });
-    # logged in
-    return jsonify(flatten_user(user))
+    return jsonify(flatten_user(current_user))
 
 # get positions of all active users
 @app.route('/api/user/all', methods=['GET'])
-@login_required
+@api_login_required
 def api_all_users():
     ret = []
 
@@ -93,7 +77,7 @@ def api_login():
 
 # get dancars available for picking up passengers
 @app.route('/api/car/available', methods=['GET'])
-@login_required
+@api_login_required
 def api_available_cars():
     cars = AvailableDancars.query.all()
     ret = [flatten_user(car) for car in cars]
@@ -102,7 +86,7 @@ def api_available_cars():
 # request a pickup
 # should pass in lng/lat/location_accuracy_meters (will use current_user's by default)
 @app.route('/api/car/request_pickup/<car_id>', methods=['POST'])
-@login_required
+@api_login_required
 def api_request_pickup(car_id):
     # sanity-check that this car is still available
     car = AvailableDancars.query.filter(AvailableDancars.id == car_id).scalar()
@@ -128,7 +112,7 @@ def api_request_pickup(car_id):
 
 # confirm
 @app.route('/api/pickup/<pickup_id>/confirm', methods=['POST'])
-@login_required
+@api_login_required
 def api_confirm_pickup(pickup_id):
     # check view to make sure this is still available 
     if not AvailblePickupRequests.query.filter(AvailblePickupRequests.id == pickup_id).scalar():
@@ -140,7 +124,7 @@ def api_confirm_pickup(pickup_id):
 
 # cancel
 @app.route('/api/pickup/<pickup_id>/cancel', methods=['POST'])
-@login_required
+@api_login_required
 def api_cancel_pickup(pickup_id):
     pickup = PickupRequest.query.filter(PickupRequest.id == pickup_id).scalar()
     if not pickup:
@@ -150,7 +134,7 @@ def api_cancel_pickup(pickup_id):
 
 # picked up
 @app.route('/api/pickup/<pickup_id>/picked_up', methods=['POST'])
-@login_required
+@api_login_required
 def api_picked_up_pickup(pickup_id):
     pickup = PickupRequest.query.filter(PickupRequest.id == pickup_id).scalar()
     if not pickup:
@@ -160,7 +144,7 @@ def api_picked_up_pickup(pickup_id):
 
 # complete
 @app.route('/api/pickup/<pickup_id>/complete', methods=['POST'])
-@login_required
+@api_login_required
 def api_complete_pickup(pickup_id):
     pickup = PickupRequest.query.filter(PickupRequest.id == pickup_id).scalar()
     if not pickup:
