@@ -116,6 +116,14 @@ $.extend(Dancar.prototype, {
         });
     },
 
+    // request a pickup from driver user
+    requestPickup: function(driver) {
+        var self = this;
+        self.getUserInfo(function (me) {
+
+        });
+    },
+
     // call to fetch all user locations and update the map markers
     updateUserMap: function() {
         var self = this;
@@ -225,6 +233,7 @@ $.extend(Dancar.prototype, {
     updateMarker: function(user) {
         if (! user) return;
         if (! this.map) return;
+        var self = this;
 
         var id = user.id + "";
         var lng = user.lng;
@@ -251,20 +260,28 @@ $.extend(Dancar.prototype, {
 
             var $win = $("<div/>");
             
+            // name, position last updated
             $win.append($("<div/>").text(user.name));
             $win.append($("<div/>").text($.timeago(updatedDate)));
-            $win.append($("<button class='btn'/>").text('Summon'));
+            // summon button
+            $summonBtn = $("<button class='btn'/>").text('Summon')
+                .click(function(evt) {
+                    self.requestPickup(user);
+                });
+            $win.append($summonBtn);
+            // call button
             if (user.mobile) {
                 $callBtn = $("<a/>").attr("href", "tel://" + user.mobile);
                 $callBtn.append($("<button class='btn'/>").text('Call'));
                 $win.append($callBtn);
             }
+            // define popup
             var win = new google.maps.InfoWindow({
                 'content': $win.get(0)
             });
             win.open(this.map, marker);
             this.map.panTo(pos);
-            this.map.setZoom(18);
+            this.map.setZoom(17);
         }
     }
 });

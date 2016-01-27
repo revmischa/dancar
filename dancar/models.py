@@ -44,6 +44,19 @@ def parse_point(point):
     geo = json.loads(point)
     return geo['coordinates']
 
+    @classmethod
+    def within_clause(cls, latitude, longitude, distance):
+        """Return a within clause that explicitly casts the `latitude` and 
+          `longitude` provided to geography type.
+        """
+        
+        attr = '%s.location' % cls.__tablename__
+        
+        point = 'POINT(%0.8f %0.8f)' % (longitude, latitude)
+        location = "ST_GeographyFromText(E'SRID=4326;%s')" % point
+        
+        return 'ST_DWithin(%s, %s, %d)' % (attr, location, distance)
+
 class PickupBase(GeoReferenced):
     id = Column(Integer, primary_key=True)
     created = Column(DateTime(), server_default=FetchedValue())
