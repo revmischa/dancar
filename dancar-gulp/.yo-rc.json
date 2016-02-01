@@ -1,0 +1,5 @@
+{
+  "generator-ionic-gulp": {
+    "browserify": false
+  }
+}

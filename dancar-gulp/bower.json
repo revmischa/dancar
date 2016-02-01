@@ -1,0 +1,17 @@
+{
+  "name": "Dancar",
+  "author": "Ci4anish <ci4anish@gmail.com>",
+  "private": "true",
+  "devDependencies": {},
+  "dependencies": {
+    "angular": "~1.4.8",
+    "ngCordova": "~0.1.23-alpha",
+    "angular-resource": "~1.4.8",
+    "ionic": "~1.2.1",
+    "bootstrap": "^3.3.6",
+    "angular-route": "^1.4.9"
+  },
+  "resolutions": {
+    "angular": "1.4.8"
+  }
+}

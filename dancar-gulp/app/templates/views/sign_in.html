@@ -1,0 +1,25 @@
+<div class="sign-in">
+  <div class="form">
+    <div class="list">
+      <label class="item item-input">
+        <input id="email" type="text" class="form-control" placeholder="Enter Email" ng-model="user.mail">
+      </label>
+      <label class="item item-input">
+        <input id="password" type="password" class="form-control" placeholder="Enter Password" ng-model="user.password">
+      </label>
+    </div>
+    <button class="button" id="btn-sign-in" ng-click="validation()">Sign in</button>
+  </div>
+</div>
+
+<div class="alert-mail bar bar-header bar-assertive" ng-show="mailAlert">
+  <h1 class="title">Invalid Email</h1>
+</div>
+<div class="alert-password bar bar-header bar-assertive" ng-show="passwordAlert">
+  <h1 class="title">Invalid Password</h1>
+</div>
+
+<div class="alert-server bar bar-header bar-assertive" ng-show="serverAlert">
+  <h1 class="title">Sorry the server is unavailable</h1>
+</div>
+
