@@ -1,3 +1,41 @@
+// new angular stuff setup
+var dancarDeps = ['satellizer', 'ui.router'];
+$dancar = angular.module('dancar', dancarDeps)
+    .config(function($authProvider) {
+        $authProvider.facebook({
+            clientId: '1286003954758836',
+            scope: ['email', 'user_friends'],
+            url: "/oauth/facebook/accept_code"
+        });
+    })
+    .controller('AuthCtrl', function($scope, $auth) {
+        $scope.authenticate = function(provider) {
+            console.log(provider);
+            $auth.authenticate(provider);
+        };
+        $scope.isLoggedIn = function() { return "falasldasld"; };
+    })
+    .controller('MapCtrl', function($scope, $auth) {
+    })
+    .config(function($stateProvider, $urlRouterProvider) {
+        $urlRouterProvider.otherwise('/auth');
+        $stateProvider
+            .state('home', {
+                url: '/',
+                templateUrl: 'fragment/home.html',
+                replace: false,
+                controller: 'MapCtrl as map'
+            })
+            .state('auth', {
+                url: '/auth',
+                templateUrl: 'fragment/auth.html',
+                controller: 'AuthCtrl as auth'
+            });
+    });
+
+
+// old crap below:
+
 function status(msg) {
     $(".client .status.alert").text(msg).fadeIn();
 };
@@ -246,5 +284,5 @@ $.extend(Dancar.prototype, {
     }
 });
 
-var dc = new Dancar();
-dc.initClient();
+// var dc = new Dancar();
+// dc.initClient();
