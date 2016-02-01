@@ -17,6 +17,15 @@ class WebTestCase(unittest.TestCase):
             self.session.delete(entity)
         self.session.commit()
 
+    def api_post_json(self, url, body_data, **kwargs):
+        kwargs['content_type'] = 'application/json'
+        res_data = self.app.post(url, data=json.dumps(body_data), **kwargs).data
+        try:
+            res = json.loads(res_data)
+            return res
+        except ValueError:
+            print "Did not get JSON response back: " + res_data
+
     def get_test_user(self):
         return User.query.filter(User.email == 'test@test.com').scalar()
 
@@ -44,8 +53,8 @@ class WebTestCase(unittest.TestCase):
         rv = self.login_web('test@test.com', 'test')
         # update position
         lng, lat = self.random_lng_lat()
-        rv = self.app.post('/api/user/update', data=dict(lng=lng, lat=lat))
-        self.assertIn('Location updated', rv.data, "Did not get location update message after /api/user/update")
+        ret = self.api_post_json('/api/user/update', dict(lng=lng, lat=lat))
+        self.assertIn('Location updated', ret['msg'], "Did not get location update message after /api/user/update")
         # get position
         rv = self.app.get('/api/user/info')
         ret = json.loads(rv.data)
@@ -70,9 +79,8 @@ class WebTestCase(unittest.TestCase):
 
         # request a pickup
         lng, lat = self.random_lng_lat()
-        rv = self.app.post('/api/car/request_pickup/' + str(car.id), data=dict(lng=lng, lat=lat))
-        self.assertEquals(rv.status_code, 200, "Did not get OK status from pickup request API")
-        pickup = json.loads(rv.data)['pickup']
+        ret = self.api_post_json('/api/car/request_pickup/' + str(car.id), dict(lng=lng, lat=lat))
+        pickup = ret['pickup']
         self.assertFalse(pickup['use_user_location'], "Failed to specify manually-defined pickup location")
         self.assertEquals(str(pickup['lng']), str(lng), "Did not use manually-defined pickup location")
         self.assertEquals(str(pickup['lat']), str(lat), "Did not use manually-defined pickup location")
@@ -102,8 +110,7 @@ class WebTestCase(unittest.TestCase):
             'email': email,
             'password': password
         }
-        r = self.app.post(endpoint, data=req)
-        res = json.loads(r.data)
+        res = self.api_post_json(endpoint, req)
         return res['success']
 
     def create_test_user(self, name):

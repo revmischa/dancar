@@ -26,11 +26,12 @@ def index():
 @app.route('/api/user/update', methods=['POST'])
 @api_login_required
 def user_update():
-    current_user.set_location(request.values['lng'],request.values['lat'])
-    if 'location_accuracy_meters' in request.values:
-        current_user.location_accuracy_meters = request.values['location_accuracy_meters']
+    params = request.get_json()
+    current_user.set_location(params['lng'],params['lat'])
+    if 'location_accuracy_meters' in params:
+        current_user.location_accuracy_meters = params['location_accuracy_meters']
         db.session.commit()
-    return "Location updated."
+    return jsonify({"msg":"Location updated."})
 
 # get my user info
 @app.route('/api/user/info', methods=['GET'])
@@ -61,8 +62,9 @@ def api_all_users():
 
 @app.route('/api/login', methods=['POST'])
 def api_login():
-    email = request.values['email']
-    password = request.values['password']
+    params = request.get_json()
+    email = params['email']
+    password = params['password']
  
     user, user_email = app.user_manager.find_user_by_email(email)
 
@@ -100,8 +102,9 @@ def api_request_pickup(car_id):
         return jsonify({ 'message': 'Pickup request failed' })
 
     # specific lng/lat?
-    if 'lng' in request.values and 'lat' in request.values:
-        pickup_request.set_location(request.values['lng'], request.values['lat'])
+    params = request.get_json()
+    if 'lng' in params and 'lat' in params:
+        pickup_request.set_location(params['lng'], params['lat'])
         pickup_request.use_user_location = False
         pickup_request.location_accuracy_meters = None
         db.session.commit()
