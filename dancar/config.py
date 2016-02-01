@@ -2,7 +2,7 @@ import os
 
 # base settings
 class Config(object):
-    DEBUG = False
+    DEBUG = True
     TESTING = False
     CSRF_ENABLED = True
     CORS_ENABLED = True

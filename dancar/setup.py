@@ -21,6 +21,7 @@ def setup_app(app):
         logging.basicConfig()
         logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
+    logging.basicConfig(level=logging.DEBUG)
     # logging.getLogger('flask_cors').setLevel(logging.DEBUG)
 
     # CORS
