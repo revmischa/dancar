@@ -12,6 +12,8 @@ def setup_app(app):
 
     # load config
     app.config.from_object('dancar.config.DevelopmentConfig')
+    # put local instance configuration in here
+    app.config.from_pyfile('local.cfg', silent=True)
 
     db = SQLAlchemy(app)
 

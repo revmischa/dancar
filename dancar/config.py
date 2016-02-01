@@ -16,6 +16,8 @@ class Config(object):
     USER_ENABLE_LOGIN_WITHOUT_CONFIRM = True
     USER_ENABLE_CONFIRM_EMAIL = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    FACEBOOK_APP_ID = os.getenv('FACEBOOK_APP_ID', '1286138911412007') # dancar-dev
+    FACEBOOK_SECRET = os.getenv('FACEBOOK_SECRET', '29cebc4f7867226222fa9a4e963345e1') # dancar-dev
 
 class ProductionConfig(Config):
     DEBUG = False

@@ -76,4 +76,3 @@ And you should be good to go.
 `make server`   
 `make test`   
 View the DanH user map, then run `python util/update_pos.py` to update the DanCar with random coordinates.
-

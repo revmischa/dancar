@@ -1,9 +1,9 @@
 // new angular stuff setup
-var dancarDeps = ['satellizer', 'ui.router'];
+var dancarDeps = ['satellizer', 'ui.router', 'ngResource'];
 $dancar = angular.module('dancar', dancarDeps)
     .config(function($authProvider) {
         $authProvider.facebook({
-            clientId: '1286003954758836',
+            clientId: '1286138911412007', // FIXME: somehow load from flask config
             scope: ['email', 'user_friends'],
             url: "/oauth/facebook/accept_code"
         });
