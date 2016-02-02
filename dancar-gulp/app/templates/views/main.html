@@ -1,7 +1,7 @@
 
 <div class="app container-fluid">
   <section class="client">
-    <div class="alert alert-danger" id="status-error" ng-hide="status"></div>
+    <div class="alert alert-danger" id="status-error" ng-show="status"> {{ status }}</div>
     <div class="status alert alert-info" ng-show="status"></div>
 
     <div class="not-logged-in" ng-hide="loggedIn">
@@ -13,10 +13,8 @@
     </div>
   </section>
   <section class="map logged-in">
-    <!--<div>map here</div>-->
-    <div id="map-canvas">Loading map...</div>
+    <div ng-hide="showMap">Loading map...</div>
+    <div ng-show="showMap" id="map-canvas"></div>
   </section>
 </div>
 
-
-<ui-gmap-google-map center='map.center' zoom='map.zoom'></ui-gmap-google-map>

@@ -11,32 +11,29 @@ angular.module('Dancar')
 
     $scope.user = { mail: "", password: "" };
 
-    $scope.mailAlert = false;
-    $scope.passwordAlert = false;
-    $scope.serverAlert = false;
-
-    $scope.changeView = function(view){
-      $location.path(view); // path not hash
-    };
+    $scope.alertMessage = "";
 
     $scope.logIn = function(){
-
 
       $http({
         method: 'POST',
         url: 'https://dancar.herokuapp.com/api/login',
         headers: {
           'Content-Type': 'application/json'
-
         },
         data: {
           email: $scope.user.mail,
           password: $scope.user.password
         }
       }).success(function (result) {
-        alert("success")
+        if(result.success){
+          $location.path('/main');
+          if(!$scope.$$phase){
+            $scope.$apply();
+          }
+        }
       }).error(function (error) {
-        alert("error")
+        $scope.alertMessage = "Sorry the server is unavailable";
       });
 
     };
@@ -48,11 +45,11 @@ angular.module('Dancar')
         if($scope.user.password.length > 1){
           $scope.logIn();
         }else{
-          $scope.passwordAlert = true;
+          $scope.alertMessage = "Invalid Password";
           $timeout(function(){ $scope.passwordAlert = false }, 2000);
         }
       }else{
-        $scope.mailAlert = true;
+        $scope.alertMessage = "Invalid Email";
         $timeout(function(){ $scope.mailAlert = false }, 2000);
       }
     };

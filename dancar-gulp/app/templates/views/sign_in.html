@@ -12,14 +12,8 @@
   </div>
 </div>
 
-<div class="alert-mail bar bar-header bar-assertive" ng-show="mailAlert">
-  <h1 class="title">Invalid Email</h1>
-</div>
-<div class="alert-password bar bar-header bar-assertive" ng-show="passwordAlert">
-  <h1 class="title">Invalid Password</h1>
+<div class="alert-mail bar bar-header bar-assertive" ng-show="alertMessage">
+  <h1 class="title"> {{ alertMessage }} </h1>
 </div>
 
-<div class="alert-server bar bar-header bar-assertive" ng-show="serverAlert">
-  <h1 class="title">Sorry the server is unavailable</h1>
-</div>
 
