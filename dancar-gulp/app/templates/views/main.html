@@ -1,14 +1,14 @@
 <div class="app container-fluid">
   <section class="client">
 
-    <!--<div class="status">{{ status }}</div>-->
+    <div class="status" ng-show="showStatus">{{ status }}</div>
 
       <h4 ng-hide="loggedIn">Not logged in! You must <a ng-click="$location.path('/sign')">log in</a> to use DanCar</h4>
 
       <h4 ng-show="loggedIn">Logged in!</h4>
   </section>
   <section class="map logged-in">
-    <div ng-hide="showMap">Loading map...</div>
+    <div class="loading" ng-hide="showMap">Loading map...</div>
     <div ng-show="showMap" id="map-canvas"></div>
   </section>
 </div>

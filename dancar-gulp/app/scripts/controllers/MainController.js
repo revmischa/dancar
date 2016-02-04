@@ -4,55 +4,54 @@ angular.module('Dancar')
   .controller('MainController', function($scope, $location, $http, $interval, $timeout) {
     $scope.loggedIn = false;
     $scope.apiHost = 'https://dancar.herokuapp.com';
-    $scope.map = undefined;
     $scope.showMap = false;
-    $scope.status = '';
-    $scope.markers = {};
+    $scope.markers = [];
     $scope.hasSetMapBounds = false;
     $scope.coords = {
       latitude: 37.79,
       longitude: -122.41,
       accuracy: 0
     };
+    $scope.showStatus = true;
 
     $scope.markerImg = new google.maps.MarkerImage(
       "../../images/newmarker.png"
     );
 
     //Make globally
-
-    $scope.alertMessage = '';
     $scope.alertVisible = false;
-    $scope.showAllert = function(){
+    $scope.alertMessage = '';
+    $scope.showAllert = function () {
       $scope.alertVisible = true;
-      $timeout(function(){ $scope.alertVisible = false }, 2000);
+      $timeout(function () {
+        $scope.alertVisible = false
+      }, 2000);
     };
     //
 
-    $scope.$on('$viewContentLoaded',function(){
+    $scope.$on('$viewContentLoaded', function () {
       $scope.status = 'Initializing DanCar...';
-      $scope.initializeGeolocating();
-
+      $scope.getCurrentPosition(true);
+      //$interval(function(){ $scope.getCurrentPosition(false); },5000);
       $scope.updateLoginStatus();
-
-      //$interval(function(){$scope.updateLoginStatus()},5000);
-      //$interval(function(){$scope.updateUserMap},2000);
+      $interval(function () {
+        $scope.updateLoginStatus();
+      }, 10000);
+      $scope.updateCarsMap();
+      $interval(function () {
+        $scope.updateCarsMap();
+      }, 10000);
     });
 
-    $scope.geoPositionOptions = function() {
+    //    My refactor
+
+    $scope.geoPositionOptions = function () {
       // enableHighAccuracy may require special permissions, could fail
-      return { 'enableHighAccuracy': true };
+      return {'enableHighAccuracy': true};
     };
 
-    // start tracking/updating position
-    $scope.initializeGeolocating = function() {
+    $scope.getCurrentPosition = function (drawMap) {
 
-      if ($scope.locWatchID) {
-        alert('initializeGeolocating called but watchID is set');
-        return;
-      }
-
-      // make sure geolocating is available/enabled
       if (!'geolocation' in navigator) {
 
         alert("You must enable geolocation to use DanCar");
@@ -60,130 +59,114 @@ angular.module('Dancar')
         $scope.alertMessage = 'You must enable geolocation to use DanCar';
         $scope.showAllert();
       }
-      // start watching location
+
       var positionOptions = $scope.geoPositionOptions();
 
-      var watchID = navigator.geolocation.watchPosition(function (position) {
+      var watchID = navigator.geolocation.getCurrentPosition(function (position) {
 
-        $scope.updateLatLng(position.coords.latitude, position.coords.longitude, position.coords.accuracy);            //Don`t know what is this function about
+        //$scope.updateLatLng(position.coords.latitude, position.coords.longitude, position.coords.accuracy);            //Don`t know what is this function about
 
         $scope.coords.latitude = position.coords.latitude;
         $scope.coords.longitude = position.coords.longitude;
         $scope.coords.accuracy = position.coords.accuracy;
-        $scope.status= '';
-        $scope.status = position.coords.latitude.toFixed(2) + ' ' + position.coords.longitude.toFixed(2) + ' ' + position.coords.accuracy.toFixed(2);
 
-        if(!$scope.$$phase){
+        var pos = new google.maps.LatLng($scope.coords.latitude, $scope.coords.longitude);
+
+        $timeout(function () {
+          $scope.status = 'Done';
+        }, 500);
+        //$scope.status = position.coords.latitude.toFixed(2) + ' ' + position.coords.longitude.toFixed(2) + ' ' + position.coords.accuracy.toFixed(2);
+        $timeout(function () {
+          $scope.showStatus = false;
+        }, 1000);
+
+        if (!$scope.$$phase) {
           $scope.$apply();
+        }
+
+        if (drawMap) {
+          $scope.initializeMap(pos);
+        } else {
+          $scope.updateMarker(pos);
+          console.log("Marker updated")
         }
 
       }, function (err) {
 
-        alert("don`t get location");
+        $scope.status = "Don`t get location";
         // error
         if (err.code == 1) {
           // PERMISSION_DENIED
           $scope.status = 'You must grant permission for your browser to acquire your location to use DanCar';
-          alert("don`t get location - 1");
+          //alert("don`t get location - 1");
           return;
         } else if (err.code == 2) {
           // POSITION_UNAVAILABLE
           $scope.status = 'Could not determine your location';
-          alert("don`t get location - 2");
+          //alert("don`t get location - 2");
           return;
         }
       }, positionOptions);
-
-      $scope.locWatchID = watchID;
-      $scope.initializeMap('map-canvas');
-
     };
 
-    $scope.updateLatLng = function(lat, lng, accuracy_meters) {
-      // ideally we would retry later if not logged in when this is called
-      if (!$scope.loggedIn)
-        return;
+    $scope.initializeMap = function (myPos) {
 
-      if (!lat && !lng) {
-        // yes technically speaking these could be zero... whatever
-        alert('updateLatLng called with no lat/lng');
-        return;
-      }
-
-      var update = {
-        'lat': lat,
-        'lng': lng
-      };
-
-      if (accuracy_meters)
-        update.location_accuracy_meters = accuracy_meters;
-
-      $http({
-        method: 'POST',
-        url: $scope.apiHost + '/api/user/update',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        data: update
-      }).success(function (result) {
-        if(result.data.msg = 'Location updated.'){            //!!!!  Include data
-          alert('updated position');
-        }
-      }).error(function (error) {
-        alert('Sorry the server is unavailable');
-      });
-    };
-
-    $scope.initializeMap = function(mapId) {
-      if (!mapId)
-        mapId = 'map-canvas';
-
-      console.log($scope.coords.latitude);
-      console.log($scope.coords.longitude);
+      var mapId = 'map-canvas';
 
       var mapOptions = {
         zoom: 13,
-        center: new google.maps.LatLng($scope.coords.latitude, $scope.coords.longitude),
+        center: myPos,
         mapTypeId: google.maps.MapTypeId.HYBRID
       };
 
       $scope.map = new google.maps.Map(document.getElementById(mapId), mapOptions);
-
       $scope.showMap = true;
 
-      var markerPos = new google.maps.LatLng($scope.coords.latitude, $scope.coords.longitude);
+      if (!$scope.$$phase) {
+        $scope.$apply();
+      }
 
-      var marker = new google.maps.Marker({
-        'map': $scope.map,
-        'position': markerPos,
-        'draggable': false,
-        'title': 'Me',
-        'animation': google.maps.Animation.DROP,
-        icon: $scope.markerImg
-      });
-
-      marker.setMap($scope.map);
-
-      var win = new google.maps.InfoWindow({
-        'content': "It`s Me!"
-      });
-      win.open($scope.map, marker);
+      $scope.updateMarker(myPos);
     };
 
-    $scope.updateLoginStatus = function(){
-      $scope.getUserInfo(function(res) {
+    $scope.updateMarker = function (pos) {
+
+      if (!$scope.map) return;
+
+      if ($scope.marker) {
+        $scope.marker.setPosition(pos);
+      } else {
+        // create new marker
+        $scope.marker = new google.maps.Marker({
+          'map': $scope.map,
+          'position': pos,
+          'draggable': false,
+          'animation': google.maps.Animation.DROP
+          //icon: $scope.markerImg
+        });
+
+        var win = new google.maps.InfoWindow({
+          'content': "It`s Me!"
+        });
+        win.open($scope.map, $scope.marker);
+        //$scope.map.panTo(pos);
+        $scope.map.setZoom(18);
+      }
+    };
+
+    $scope.updateLoginStatus = function () {
+      $scope.getUserInfo(function (res) {
         if (res) {
           $scope.loggedIn = true;
-          $scope.updateUserMap();
-        }else{
+          //$scope.updateUserMap();
+        } else {
           $scope.loggedIn = false;
         }
       });
     };
 
-    //checks to see if user is logged in and calls cb
-    // cb is called with user info hash if logged in, false otherwise
-    $scope.getUserInfo =  function(cb){
+
+    $scope.getUserInfo = function (callBack) {
 
       $http({
         method: 'GET',
@@ -196,27 +179,29 @@ angular.module('Dancar')
         if (!info.data.id) {
           // not logged in
           alert('User is not logged in');   /////////
-          $scope.loggedIn = false;
-          cb(false);
+          callBack(false);
           return;
         }
 
-        $scope.loggedIn = true;
-        cb(info);
+        callBack(info);
 
       }, function errorCallback(error) {
-        alert('Server not not responding');   //////
+        $scope.alertMessage = 'Server not not responding';
+        $scope.showAllert();
       });
     };
 
-    // call to fetch all user locations and update the map markers
-    $scope.updateUserMap = function(){
+    //Get cars
+
+    $scope.updateCarsMap = function () {
 
       $http({
         method: 'GET',
         url: $scope.apiHost + '/api/user/all'
+        //url: $scope.apiHost + '/api/car/available'
       }).then(function successCallback(res) {
 
+        //if (!res || !res.data.cars) {
         if (!res || !res.data.users) {
 
           alert('Did not get successful /api/user/all response');   ///////
@@ -224,13 +209,15 @@ angular.module('Dancar')
           return;
         }
 
-        var users = res.data.users;
+        //var cars = res.data.cars;
+        var cars = res.data.users;
         var bounds = new google.maps.LatLngBounds();
-        for (var i in users) {
-          var user = users[i];
 
-          $scope.updateMarker(user);
-          var point = $scope.getUserPoint(user);
+        for (var i = 0; i < cars.length; i++) {
+          var car = cars[i];
+
+          $scope.updateCarMarker(car);
+          var point = $scope.getCarPoint(car);
           if (point)
             bounds.extend(point);
         }
@@ -238,63 +225,64 @@ angular.module('Dancar')
         if (!$scope.hasSetMapBounds && bounds) {
           // position map so all dancars are visible
           $scope.hasSetMapBounds = true;
-
           $scope.map.panToBounds(bounds);
         }
 
       }, function errorCallback(error) {
-        alert('Server not not responding');   //////
+        $scope.alertMessage = 'Server not not responding';
+        $scope.showAllert();
       });
     };
 
-    $scope.updateMarker = function(user) {
+    $scope.updateCarMarker = function (car) {
 
-      if(!user) return;
-      if(!$scope.map) return;
+      if (!car) return;
+      if (!$scope.map) return;
 
-      var id = user.id + '';
-      var pos = $scope.getUserPoint(user);
+      var id = car.id + '';
+      var pos = $scope.getCarPoint(car);
 
-      if (!user || !id || !pos) return;
+      if (!car || !id || !pos) return;
 
-      var marker = $scope.markers[id];
+      var carMarker = $scope.markers[id];
 
-      if (marker) {
-        marker.setPosition(pos);
+      if (carMarker) {
+        carMarker.setPosition(pos);
       } else {
         // create new marker
-        marker = new google.maps.Marker({
+        carMarker = new google.maps.Marker({
           'map': $scope.map,
           'position': pos,
           'draggable': false,
-          'title': user.name,
+          'title': car.name,
           'animation': google.maps.Animation.DROP
         });
-        $scope.markers[id] = marker;
+        $scope.markers[id] = carMarker;
 
         var $win = document.createElement('div');
 
-        var $userName = document.createElement('div');
-        $userName.appendChild(document.createTextNode(user.name));
+        var $carName = document.createElement('div');
+        $carName.appendChild(document.createTextNode(car.name));
 
-        //var updatedDate = new Date(user.updated_location * 1000);
+        //var updatedDate = new Date(car.updated_location * 1000);
         //var $dateUpdate = document.createElement('div');
-        //$userName.appendChild(document.createTextNode(updatedDate));
+        //$carName.appendChild(document.createTextNode(updatedDate));
 
         var $summon = document.createElement('button');
         $summon.className = 'button';
         $summon.appendChild(document.createTextNode('Summon'));
 
-        $win.appendChild($userName);
+        $win.appendChild($carName);
         $win.appendChild($summon);
 
-        //$win.append($('<div/>').text(user.name));
+        //$win.append($('<div/>').text(car.name));
         //$win.append($('<div/>').text($.timeago(updatedDate)));          //Time ago jquery
         //$win.append($('<button class='btn'/>').text('Summon'));
-        if(user.mobile) {
+
+        if (car.mobile) {
 
           var $callBtn = document.createElement('a');
-          $callBtn.setAttribute('href', 'tel:' + user.mobile);
+          $callBtn.setAttribute('href', 'tel:' + car.mobile);
 
           var $callSubBtn = document.createElement('button');
           $callSubBtn.className = 'button call-btn';
@@ -307,20 +295,20 @@ angular.module('Dancar')
         var win = new google.maps.InfoWindow({
           'content': $win
         });
-        win.open($scope.map, marker);
-        //$scope.map.panTo(pos);
+        win.open($scope.map, carMarker);
+        $scope.map.panTo(pos);
         $scope.map.setZoom(18);
       }
     };
 
-    $scope.getUserPoint = function(user) {
+    $scope.getCarPoint = function (car) {
 
-      var lng = user.lng;
-      var lat = user.lat;
+      var lng = car.lng;
+      var lat = car.lat;
 
-      if (!user || !lng || !lat) return;
+      if (!car || !lng || !lat) return;
       var pos = new google.maps.LatLng(Number(lat), Number(lng));
       return pos;
     };
 
-  });
+});
