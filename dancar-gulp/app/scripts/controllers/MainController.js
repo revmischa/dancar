@@ -32,7 +32,7 @@ angular.module('Dancar')
     $scope.$on('$viewContentLoaded', function () {
       $scope.status = 'Initializing DanCar...';
       $scope.getCurrentPosition(true);
-      //$interval(function(){ $scope.getCurrentPosition(false); },5000);
+      $interval(function(){ $scope.getCurrentPosition(false); },5000);
       $scope.updateLoginStatus();
       $interval(function () {
         $scope.updateLoginStatus();

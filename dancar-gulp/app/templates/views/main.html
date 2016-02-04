@@ -1,12 +1,15 @@
 <div class="app container-fluid">
   <section class="client">
 
-    <div class="status" ng-show="showStatus">{{ status }}</div>
+    <h1 class="small">DanCar</h1>
 
-      <h4 ng-hide="loggedIn">Not logged in! You must <a ng-click="$location.path('/sign')">log in</a> to use DanCar</h4>
+    <h4 ng-hide="loggedIn">Not logged in! You must <a ng-click="$location.path('/sign')">log in</a> to use DanCar</h4>
+    <h4 ng-show="loggedIn">Logged in!</h4>
 
-      <h4 ng-show="loggedIn">Logged in!</h4>
   </section>
+
+  <div class="status" ng-show="showStatus">{{ status }}</div>
+
   <section class="map logged-in">
     <div class="loading" ng-hide="showMap">Loading map...</div>
     <div ng-show="showMap" id="map-canvas"></div>
@@ -14,6 +17,6 @@
 </div>
 
 <div class="alert-mail bar bar-header bar-assertive" ng-show="alertVisible">
-  <h1 class="title"> {{ alertMessage }} </h1>
+  <h2 class="title"> {{ alertMessage }} </h2>
 </div>
 

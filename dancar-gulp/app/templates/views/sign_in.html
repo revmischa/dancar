@@ -1,10 +1,14 @@
 <div class="sign-in">
   <div class="form">
+    <h1 class="big">DanCar</h1>
+
     <div class="list">
-      <label class="item item-input">
+      <label class="item item-input item-floating-label">
+        <span class="input-label">Enter Email</span>
         <input id="email" type="text" class="form-control" placeholder="Enter Email" ng-model="user.mail">
       </label>
-      <label class="item item-input">
+      <label class="item item-input item-floating-label">
+        <span class="input-label">Enter Password</span>
         <input id="password" type="password" class="form-control" placeholder="Enter Password" ng-model="user.password">
       </label>
     </div>
@@ -13,7 +17,7 @@
 </div>
 
 <div class="alert-mail bar bar-header bar-assertive" ng-show="alertVisible">
-  <h1 class="title"> {{ alertMessage }} </h1>
+  <h2 class="title"> {{ alertMessage }} </h2>
 </div>
 
 
