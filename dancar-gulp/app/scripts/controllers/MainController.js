@@ -41,6 +41,12 @@ angular.module('Dancar')
       $interval(function () {
         $scope.updateCarsMap();
       }, 10000);
+      $timeout(function () {
+        $scope.status = 'Done';
+      }, 500);
+      $timeout(function () {
+        $scope.showStatus = false;
+      }, 1000);
     });
 
     //    My refactor
@@ -72,14 +78,6 @@ angular.module('Dancar')
 
         var pos = new google.maps.LatLng($scope.coords.latitude, $scope.coords.longitude);
 
-        $timeout(function () {
-          $scope.status = 'Done';
-        }, 500);
-        //$scope.status = position.coords.latitude.toFixed(2) + ' ' + position.coords.longitude.toFixed(2) + ' ' + position.coords.accuracy.toFixed(2);
-        $timeout(function () {
-          $scope.showStatus = false;
-        }, 1000);
-
         if (!$scope.$$phase) {
           $scope.$apply();
         }
@@ -88,7 +86,6 @@ angular.module('Dancar')
           $scope.initializeMap(pos);
         } else {
           $scope.updateMarker(pos);
-          console.log("Marker updated")
         }
 
       }, function (err) {
@@ -116,10 +113,12 @@ angular.module('Dancar')
       var mapOptions = {
         zoom: 13,
         center: myPos,
-        mapTypeId: google.maps.MapTypeId.HYBRID
+        mapTypeId: google.maps.MapTypeId.TERRAIN
       };
 
       $scope.map = new google.maps.Map(document.getElementById(mapId), mapOptions);
+
+      $scope.status = "loading map";
       $scope.showMap = true;
 
       if (!$scope.$$phase) {
@@ -145,8 +144,9 @@ angular.module('Dancar')
           //icon: $scope.markerImg
         });
 
+
         var win = new google.maps.InfoWindow({
-          'content': "It`s Me!"
+          'content': "<div class='marker-title'>It`s Me!</div>"
         });
         win.open($scope.map, $scope.marker);
         //$scope.map.panTo(pos);
@@ -262,6 +262,7 @@ angular.module('Dancar')
         var $win = document.createElement('div');
 
         var $carName = document.createElement('div');
+        $carName.className = 'marker-title';
         $carName.appendChild(document.createTextNode(car.name));
 
         //var updatedDate = new Date(car.updated_location * 1000);
@@ -269,7 +270,7 @@ angular.module('Dancar')
         //$carName.appendChild(document.createTextNode(updatedDate));
 
         var $summon = document.createElement('button');
-        $summon.className = 'button';
+        $summon.className = 'button call-btns';
         $summon.appendChild(document.createTextNode('Summon'));
 
         $win.appendChild($carName);
@@ -285,7 +286,7 @@ angular.module('Dancar')
           $callBtn.setAttribute('href', 'tel:' + car.mobile);
 
           var $callSubBtn = document.createElement('button');
-          $callSubBtn.className = 'button call-btn';
+          $callSubBtn.className = 'button call-btn call-btns';
           $callSubBtn.appendChild(document.createTextNode('Call'));
 
           $callBtn.appendChild($callSubBtn);

@@ -3,15 +3,13 @@
 
     <h1 class="small">DanCar</h1>
 
-    <h4 ng-hide="loggedIn">Not logged in! You must <a ng-click="$location.path('/sign')">log in</a> to use DanCar</h4>
-    <h4 ng-show="loggedIn">Logged in!</h4>
+    <h4 class="not-log" ng-hide="loggedIn">You must <a ng-click="$location.path('/sign')">log in</a> to use DanCar</h4>
+    <h4 class="logged" ng-show="loggedIn">Logged in!</h4>
 
   </section>
 
-  <div class="status" ng-show="showStatus">{{ status }}</div>
-
   <section class="map logged-in">
-    <div class="loading" ng-hide="showMap">Loading map...</div>
+    <!--<div class="loading" ng-hide="showMap"><img src="../../images/ajax_loader.gif" alt="Loader"></div>-->
     <div ng-show="showMap" id="map-canvas"></div>
   </section>
 </div>
@@ -19,4 +17,9 @@
 <div class="alert-mail bar bar-header bar-assertive" ng-show="alertVisible">
   <h2 class="title"> {{ alertMessage }} </h2>
 </div>
+
+<div class="alert-status bar bar-header bar-assertive" ng-show="showStatus">
+  <h2 class="title status"> {{ status }} </h2>
+</div>
+
 
