@@ -121,9 +121,7 @@ angular.module('Dancar')
       $scope.status = "loading map";
       $scope.showMap = true;
 
-      if (!$scope.$$phase) {
-        $scope.$apply();
-      }
+      $scope.$evalAsync();
 
       $scope.updateMarker(myPos);
     };

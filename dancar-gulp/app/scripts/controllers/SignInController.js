@@ -34,9 +34,7 @@ angular.module('Dancar')
       }).success(function (result) {
         if(result.success){
           $location.path('/main');
-          if(!$scope.$$phase){
-            $scope.$apply();
-          }
+          $scope.$evalAsync();
         } else{
           $scope.alertMessage = 'No such user or invalid password';
           $scope.showAllert();
