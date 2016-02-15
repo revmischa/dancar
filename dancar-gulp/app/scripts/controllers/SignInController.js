@@ -32,14 +32,18 @@ angular.module('Dancar')
           password: $scope.user.password
         }
       }).success(function (result) {
+
         if(result.success){
           $location.path('/main');
+
           $scope.$evalAsync();
-        } else{
+
+    } else{
           $scope.alertMessage = 'No such user or invalid password';
           $scope.showAllert();
         }
       }).error(function (error) {
+
         $scope.alertMessage = 'Sorry the server is unavailable';
         $scope.showAllert();
       });

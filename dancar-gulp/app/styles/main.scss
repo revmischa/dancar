@@ -151,7 +151,7 @@ a{
   position: absolute;
   width: 100%;
   height: 100%;
-  height: 100vh;
+  //height: 100vh;
 }
 
 .item-floating-label {
@@ -185,7 +185,8 @@ h1.big{
 
 h1.small{
   font-size: 30px;
-  float: left;
+  display: inline-block;
+  //float: left;
   line-height: 40px;
   margin-bottom: 0;
   text-shadow: 1px 2px #091556;
@@ -271,21 +272,35 @@ a{
   cursor: pointer;
 }
 
-.loading {
-  display: flex;
-  margin: 0;
-  justify-content: center;
-  position: absolute;
-  width: 100%;
-  height:100%;
-  height: calc(100vh - 58px);
-  align-items: center;
-
-  img{
-    width: 80px;
-    height: 80px;
-  }
-}
+//.loading {
+//  margin: 0;
+//  position: absolute;
+//  width: 100%;
+//  height:100%;
+//  display: -ms-flexbox;
+//  display: -webkit-flex;
+//  display: flex;
+//  -webkit-flex-direction: row;
+//  -ms-flex-direction: row;
+//  flex-direction: row;
+//  -webkit-flex-wrap: nowrap;
+//  -ms-flex-wrap: nowrap;
+//  flex-wrap: nowrap;
+//  -webkit-justify-content: center;
+//  -ms-flex-pack: center;
+//  justify-content: center;
+//  -webkit-align-content: flex-start;
+//  -ms-flex-line-pack: start;
+//  align-content: flex-start;
+//  -webkit-align-items: center;
+//  -ms-flex-align: center;
+//  align-items: center;
+//
+//  img{
+//    width: 80px;
+//    height: 80px;
+//  }
+//}
 
 .gm-style-mtc,
 .gm-style-cc{
