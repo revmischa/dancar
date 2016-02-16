@@ -21,7 +21,7 @@ angular.module('Dancar')
     //Make globally
     $scope.alertVisible = false;
     $scope.alertMessage = '';
-    $scope.showAllert = function () {
+    $scope.showAlert = function () {
       $scope.alertVisible = true;
       $timeout(function () {
         $scope.alertVisible = false
@@ -63,7 +63,7 @@ angular.module('Dancar')
         alert("You must enable geolocation to use DanCar");
 
         $scope.alertMessage = 'You must enable geolocation to use DanCar';
-        $scope.showAllert();
+        $scope.showAlert();
       }
 
       var positionOptions = $scope.geoPositionOptions();
@@ -185,7 +185,7 @@ angular.module('Dancar')
 
       }, function errorCallback(error) {
         $scope.alertMessage = 'Server not not responding';
-        $scope.showAllert();
+        $scope.showAlert();
       });
     };
 
@@ -228,7 +228,7 @@ angular.module('Dancar')
 
       }, function errorCallback(error) {
         $scope.alertMessage = 'Server not not responding';
-        $scope.showAllert();
+        $scope.showAlert();
       });
     };
 

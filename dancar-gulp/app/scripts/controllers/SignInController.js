@@ -14,7 +14,7 @@ angular.module('Dancar')
     $scope.alertMessage = '';
     $scope.alertVisible = false;
 
-    $scope.showAllert = function(){
+    $scope.showAlert = function(){
       $scope.alertVisible = true;
       $timeout(function(){ $scope.alertVisible = false; }, 2000);
     };
@@ -40,12 +40,12 @@ angular.module('Dancar')
 
     } else{
           $scope.alertMessage = 'No such user or invalid password';
-          $scope.showAllert();
+          $scope.showAlert();
         }
       }).error(function (error) {
 
         $scope.alertMessage = 'Sorry the server is unavailable';
-        $scope.showAllert();
+        $scope.showAlert();
       });
 
     };
@@ -58,11 +58,11 @@ angular.module('Dancar')
           $scope.logIn();
         }else{
           $scope.alertMessage = 'Invalid Password';
-          $scope.showAllert();
+          $scope.showAlert();
         }
       }else{
         $scope.alertMessage = 'Invalid Email';
-        $scope.showAllert();
+        $scope.showAlert();
       }
     };
 
