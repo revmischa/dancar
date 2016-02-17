@@ -1,0 +1,20 @@
+
+<div class="app container-fluid">
+  <section class="client">
+    <div class="alert alert-danger" id="status-error" ng-show="status"> {{ status }}</div>
+    <div class="status alert alert-info" ng-show="status"></div>
+
+    <div class="not-logged-in" ng-hide="loggedIn">
+      <h2>Not logged in</h2>
+      You must <a ng-click="changeView('sign-in')">log in</a> to use DanCar
+    </div>
+    <div class="logged-in" ng-show="loggedIn">
+      Logged in!
+    </div>
+  </section>
+  <section class="map logged-in">
+    <div ng-hide="showMap">Loading map...</div>
+    <div ng-show="showMap" id="map-canvas"></div>
+  </section>
+</div>
+

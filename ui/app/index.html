@@ -1,0 +1,33 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta charset="utf-8">
+    <!--<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">-->
+    <!--<meta name="format-detection" content="telephone=no">-->
+    <title>Dancar</title>
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+    <!--<link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css">-->
+
+    <!--<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://*.gstatic.com https://netdna.bootstrapcdn.com https://dancar.herokuapp.com https://maxcdn.bootstrapcdn.com https://*.googleapis.com https://maps.gstatic.com https://code.jquery.com 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://*.googleapis.com https://netdna.bootstrapcdn.com; media-src *">-->
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+
+    <!-- inject:app-styles:css --><!-- endinject -->
+    <!-- uncomment if using your own iconfont -->
+    <!-- <link rel="stylesheet" href="styles/own-icons.css"> -->
+</head>
+<body ng-app="Dancar">
+
+  <div ng-view style="height: 100%"></div>
+   <!--<ion-nav-view></ion-nav-view>-->
+
+  <!-- inject:vendor:js --><!-- endinject -->
+  <!-- inject:app:js --><!-- endinject -->
+
+<script src="cordova.js"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCyGGCtHnMtJITwVg8wiiLKqVSG3yhQyPU"></script>  <!--sensor=true-->
+
+</body>
+</html>
