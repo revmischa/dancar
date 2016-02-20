@@ -6,7 +6,7 @@ class Config(object):
     TESTING = False
     CSRF_ENABLED = True
     CORS_ENABLED = True
-    CORS_ORIGINS = 'http://localhost:5000 http://localhost:9000'
+    CORS_ORIGINS = 'http://localhost:5000 http://localhost:9000 http://localhost:8100'
     SECRET_KEY = os.getenv('SECRET_KEY', 'THIS IS AN INSECURE SECRET')
     SQLALCHEMY_DATABASE_URI = os.getenv('HEROKU_POSTGRESQL_ONYX_URL', 'postgresql:///dancar')
     USER_LOGIN_TEMPLATE = 'flask_user/login_or_register.html'
