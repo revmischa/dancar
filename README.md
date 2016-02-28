@@ -37,10 +37,12 @@
 * Cooler map markers
 
 ## Frontend/mobile app development:
-(You need node.js)
+(You need [node.js](https://nodejs.org/en/))
 In `ui/` directory
 ```
 cd ui
+# these should be installed system-wide i believe. please correct me if i'm wrong.
+sudo npm install -g cordova ionic gulp bower
 npm install
 gulp  # serves up local app
 
@@ -51,6 +53,7 @@ ionic platform add osx
 
 # run local dev server
 gulp
+# or
 ionic serve osx
 ```
 
