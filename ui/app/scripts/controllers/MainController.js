@@ -3,15 +3,15 @@
 angular.module('Dancar')
   .controller('MainController', function($scope, $location, $http,$interval) {
     $scope.loggedIn = false;
-    $scope.apiHost = "https://dancar.herokuapp.com";
+    $scope.apiHost = 'https://dancar.herokuapp.com';
     $scope.map = undefined;
     $scope.showMap = false;
-    $scope.status = "";
+    $scope.status = '';
     $scope.markers = {};
     $scope.hasSetMapBounds = false;
 
     $scope.$on('$viewContentLoaded',function(){
-      $scope.status = "Initializing DanCar...";
+      $scope.status = 'Initializing DanCar...';
       $scope.initializeMap();
       $scope.initializeGeolocating();
       $scope.updateLoginStatus();
@@ -65,15 +65,15 @@ angular.module('Dancar')
         url: $scope.apiHost + '/api/user/info'
       }).then(function successCallback(info) {
         if (!info) {
-          alert("failed to get user info API response");  ////////////////////////////////////////////////
+          alert('failed to get user info API response');  ////////////////////////////////////////////////
           return;
         }
         if (!info.data.id) {
           //for(var i in info.data){
-          //  alert(i + ": " + info.data[i]);
+          //  alert(i + ': ' + info.data[i]);
           //}
           // not logged in
-          alert("User is not logged in");   ////////////////////////////////////////////////
+          alert('User is not logged in');   ////////////////////////////////////////////////
           $scope.loggedIn = false;
           cb(false);
           return;
@@ -83,7 +83,7 @@ angular.module('Dancar')
         cb(info);
 
       }, function errorCallback(error) {
-        alert("Server not not responding");   ////////////////////////////////////////////////
+        alert('Server not not responding');   ////////////////////////////////////////////////
       });
     };
 
@@ -97,8 +97,8 @@ angular.module('Dancar')
 
         if (!res || !res.data.users) {
 
-          alert("Did not get successful /api/user/all response");   ////////////////////////////////////////////////
-          $scope.status = "Failed to load DanCar users";
+          alert('Did not get successful /api/user/all response');   ////////////////////////////////////////////////
+          $scope.status = 'Failed to load DanCar users';
           return;
         }
 
@@ -119,11 +119,11 @@ angular.module('Dancar')
 
           $scope.map.panToBounds(bounds);
 
-          alert("End adding users")
+          alert('End adding users');
         }
 
       }, function errorCallback(error) {
-        alert("Server not not responding");   ////////////////////////////////////////////////
+        alert('Server not not responding');   ////////////////////////////////////////////////
       });
     };
 
@@ -132,7 +132,7 @@ angular.module('Dancar')
       if(!user) return;
       if(!$scope.map) return;
 
-      var id = user.id + "";
+      var id = user.id + '';
       var pos = $scope.getUserPoint(user);
 
       if (!user || !id || !pos) return;
@@ -152,32 +152,32 @@ angular.module('Dancar')
         });
         $scope.markers[id] = marker;
 
-        var $win = document.createElement("div");
+        var $win = document.createElement('div');
 
-        var $userName = document.createElement("div");
+        var $userName = document.createElement('div');
         $userName.appendChild(document.createTextNode(user.name));
 
         //var updatedDate = new Date(user.updated_location * 1000);
-        //var $dateUpdate = document.createElement("div");
+        //var $dateUpdate = document.createElement('div');
         //$userName.appendChild(document.createTextNode(updatedDate));
 
-        var $summon = document.createElement("button");
-        $summon.className = "btn";
+        var $summon = document.createElement('button');
+        $summon.className = 'btn';
         $summon.appendChild(document.createTextNode('Summon'));
 
         $win.appendChild($userName);
         $win.appendChild($summon);
 
-        //$win.append($("<div/>").text(user.name));
-        //$win.append($("<div/>").text($.timeago(updatedDate)));          //Time ago jquery
-        //$win.append($("<button class='btn'/>").text('Summon'));
+        //$win.append($('<div/>').text(user.name));
+        //$win.append($('<div/>').text($.timeago(updatedDate)));          //Time ago jquery
+        //$win.append($('<button class='btn'/>').text('Summon'));
         if(user.mobile) {
 
-          var $callBtn = document.createElement("a");
-          $callBtn.setAttribute("href", "tel://" + user.mobile);
+          var $callBtn = document.createElement('a');
+          $callBtn.setAttribute('href', 'tel://' + user.mobile);
 
-          var $callSubBtn = document.createElement("button");
-          $callSubBtn.className = "btn";
+          var $callSubBtn = document.createElement('button');
+          $callSubBtn.className = 'btn';
           $callSubBtn.appendChild(document.createTextNode('Call'));
 
           $callBtn.appendChild($callSubBtn);
@@ -213,15 +213,15 @@ angular.module('Dancar')
     $scope.initializeGeolocating = function() {
 
       if ($scope.locWatchID) {
-        alert("initializeGeolocating called but watchID is set");
+        alert('initializeGeolocating called but watchID is set');
         return;
       }
 
       // make sure geolocating is available/enabled
-      if (!"geolocation" in navigator) {
+      if (!'geolocation' in navigator) {
         // can't geolocate
         if (errorcb)
-          errorcb("You must enable geolocation to use DanCar");
+          errorcb('You must enable geolocation to use DanCar');
         return;
       }
 
@@ -232,17 +232,17 @@ angular.module('Dancar')
 
         $scope.updateLatLng(position.coords.latitude, position.coords.longitude, position.coords.accuracy);
 
-        $scope.status = position.coords.latitude + " " + position.coords.longitude + " " +  position.coords.accuracy;
+        $scope.status = position.coords.latitude + ' ' + position.coords.longitude + ' ' +  position.coords.accuracy;
 
       }, function(err) {
         // error
         if (err.code == 1) {
           // PERMISSION_DENIED
-            $scope.status = "You must grant permission for your browser to acquire your location to use DanCar";
+            $scope.status = 'You must grant permission for your browser to acquire your location to use DanCar';
             return;
         } else if (err.code == 2) {
           // POSITION_UNAVAILABLE
-            $scope.status = "Could not determine your location";
+            $scope.status = 'Could not determine your location';
             return;
         } // ...
       }, positionOptions);
@@ -257,7 +257,7 @@ angular.module('Dancar')
 
       if (!lat && !lng) {
         // yes technically speaking these could be zero... whatever
-        alert("updateLatLng called with no lat/lng");
+        alert('updateLatLng called with no lat/lng');
         return;
       }
 
@@ -277,11 +277,11 @@ angular.module('Dancar')
           },
           data: update
         }).success(function (result) {
-          if(result.data.msg = "Location updated."){            //!!!!  Include data
-            alert("updated position");
+          if(result.data.msg = 'Location updated.'){            //!!!!  Include data
+            alert('updated position');
           }
         }).error(function (error) {
-          alert("Sorry the server is unavailable");
+          alert('Sorry the server is unavailable');
         });
     };
 
@@ -293,13 +293,13 @@ angular.module('Dancar')
   //    this.loggedIn  = false;
   //    this.map       = undefined;
   //    this.markers   = {};
-  //    // this.apiHost   = "http://localhost:5000";
-  //    this.apiHost   = "https://dancar.herokuapp.com";
+  //    // this.apiHost   = 'http://localhost:5000';
+  //    this.apiHost   = 'https://dancar.herokuapp.com';
   //  };
   //
   //  Dancar.prototype = {
   //    initClient: function() {
-  //      status("Initializing DanCar...");
+  //      status('Initializing DanCar...');
   //      this.initializeGeolocating(this.positionUpdated.bind(this), this.positionError.bind(this));
   //      this.initializeMap();
   //      this.updateLoginStatus();
@@ -310,11 +310,11 @@ angular.module('Dancar')
   //    // got updated coordinates
   //    positionUpdated: function(position) {
   //      $scope.status = true;
-  //      status("Position updated: " + position.coords.longitude + ", " + position.coords.latitude);
+  //      status('Position updated: ' + position.coords.longitude + ', ' + position.coords.latitude);
   //    },
   //
   //    positionError: function(errStr) {
-  //      document.getElementById("status-error").innerText = errStr;
+  //      document.getElementById('status-error').innerText = errStr;
   //      $scope.status = false;
   //    },
   //
@@ -342,22 +342,22 @@ angular.module('Dancar')
   //      var self = this;
   //
   //      if (this.locWatchID) {
-  //        console.log("initializeGeolocating called but watchID is set");
+  //        console.log('initializeGeolocating called but watchID is set');
   //        return;
   //      }
   //
   //      // make sure geolocating is available/enabled
-  //      if (! "geolocation" in navigator) {
+  //      if (! 'geolocation' in navigator) {
   //        // can't geolocate
   //        if (errorcb)
-  //          errorcb("You must enable geolocation to use DanCar");
+  //          errorcb('You must enable geolocation to use DanCar');
   //        return;
   //      }
   //
   //      // start watching location
   //      var positionOptions = this.geoPositionOptions();
   //      var watchID = navigator.geolocation.watchPosition(function(position) {
-  //        // console.log("got new position: " + position.coords.latitude + ", " + position.coords.longitude);
+  //        // console.log('got new position: ' + position.coords.latitude + ', ' + position.coords.longitude);
   //        self.updateLatLng(position.coords.latitude, position.coords.longitude, position.coords.accuracy);
   //
   //        // console.log(position);
@@ -368,12 +368,12 @@ angular.module('Dancar')
   //        if (err.code == 1) {
   //          // PERMISSION_DENIED
   //          if (errorcb)
-  //            errorcb("You must grant permission for your browser to acquire your location to use DanCar");
+  //            errorcb('You must grant permission for your browser to acquire your location to use DanCar');
   //          return;
   //        } else if (err.code == 2) {
   //          // POSITION_UNAVAILABLE
   //          if (errorcb)
-  //            errorcb("Could not determine your location");
+  //            errorcb('Could not determine your location');
   //          return;
   //        } // ...
   //      }, positionOptions);
@@ -390,7 +390,7 @@ angular.module('Dancar')
   //
   //      if (! lat && ! lng) {
   //        // yes technically speaking these could be zero... whatever
-  //        console.log("updateLatLng called with no lat/lng");
+  //        console.log('updateLatLng called with no lat/lng');
   //        return;
   //      }
   //
@@ -403,7 +403,7 @@ angular.module('Dancar')
   //        update.location_accuracy_meters = accuracy_meters;
   //
   //      $.post(this.apiHost + '/api/user/update', update, function(res) {
-  //        // console.log("updated position");
+  //        // console.log('updated position');
   //      });
   //    },
   //
@@ -423,7 +423,7 @@ angular.module('Dancar')
   //      if (! user) return;
   //      if (! this.map) return;
   //
-  //      var id = user.id + "";
+  //      var id = user.id + ';
   //      var pos = this.getUserPoint(user);
   //
   //      if (! user || ! id || ! pos) return;
@@ -444,35 +444,35 @@ angular.module('Dancar')
   //
   //        //var updatedDate = new Date(user.updated_location * 1000);
   //
-  //        //var $win = $("<div/>");                             //////////////////////////////////
+  //        //var $win = $('<div/>');                             //////////////////////////////////
   //
-  //        var $win = document.createElement("div");
+  //        var $win = document.createElement('div');
   //
-  //        var $userName = document.createElement("div");
+  //        var $userName = document.createElement('div');
   //        $userName.appendChild(document.createTextNode(user.name));
   //
-  //        //var $dateUpdate = document.createElement("div");
+  //        //var $dateUpdate = document.createElement('div');
   //        //$userName.appendChild(document.createTextNode(updatedDate));
   //
-  //        var $summon = document.createElement("button");
-  //        $summon.className = "btn";
+  //        var $summon = document.createElement('button');
+  //        $summon.className = 'btn';
   //        $summon.appendChild(document.createTextNode('Summon'));
   //
   //        $win.appendChild($userName);
   //        $win.appendChild($summon);
   //
-  //        //$win.append($("<div/>").text(user.name));
-  //        //$win.append($("<div/>").text($.timeago(updatedDate)));          !!!!!!!!!!!!!!!!!!!!!!!!!!!
-  //        //$win.append($("<button class='btn'/>").text('Summon'));
+  //        //$win.append($('<div/>').text(user.name));
+  //        //$win.append($('<div/>').text($.timeago(updatedDate)));          !!!!!!!!!!!!!!!!!!!!!!!!!!!
+  //        //$win.append($('<button class='btn'/>').text('Summon'));
   //        if (user.mobile) {
-  //          //$callBtn = $("<a/>").attr("href", "tel://" + user.mobile);
-  //          //$callBtn.append($("<button class='btn'/>").text('Call'));
+  //          //$callBtn = $('<a/>').attr('href', 'tel://' + user.mobile);
+  //          //$callBtn.append($('<button class='btn'/>').text('Call'));
   //
-  //          var $callBtn = document.createElement("a");
-  //          $callBtn.setAttribute("href", "tel://" + user.mobile);
+  //          var $callBtn = document.createElement('a');
+  //          $callBtn.setAttribute('href', 'tel://' + user.mobile);
   //
-  //          var $callSubBtn = document.createElement("button");
-  //          $callSubBtn.className = "btn";
+  //          var $callSubBtn = document.createElement('button');
+  //          $callSubBtn.className = 'btn';
   //          $callSubBtn.appendChild(document.createTextNode('Call'));
   //
   //          $callBtn.appendChild($callSubBtn);
@@ -496,8 +496,8 @@ angular.module('Dancar')
   //
   //      $.get(this.apiHost + '/api/user/all', function(res){
   //        if (! res || ! res.users) {
-  //          console.log("Did not get successful /api/user/all response");
-  //          status("Failed to load DanCar users");
+  //          console.log('Did not get successful /api/user/all response');
+  //          status('Failed to load DanCar users');
   //          return;
   //        }
   //

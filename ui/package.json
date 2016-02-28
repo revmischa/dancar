@@ -4,7 +4,8 @@
   "author": "Ci4anish <ci4anish@gmail.com>",
   "description": "",
   "dependencies": {
-    "google-maps": "^3.2.1"
+    "google-maps": "^3.2.1",
+    "gulp-sourcemaps": "^1.6.0"
   },
   "devDependencies": {
     "beepbeep": "^1.2.0",

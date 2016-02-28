@@ -127,8 +127,10 @@ gulp.task('scripts', function() {
     .pipe(plugins.if(build, plugins.ngAnnotate()))
     .pipe(plugins.if(stripDebug, plugins.stripDebug()))
     .pipe(plugins.if(build, plugins.concat('app.js')))
+    // .pipe(plugins.sourcemaps.init())
     .pipe(plugins.if(build, plugins.uglify()))
     .pipe(plugins.if(build && !emulate, plugins.rev()))
+    // .pipe(plugins.sourcemaps.write('maps'))
 
     .pipe(gulp.dest(dest))
 
