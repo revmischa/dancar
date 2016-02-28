@@ -36,8 +36,24 @@
 * Notification system to inform users of Dancar status, and inform Dancar driver of pickup requests
 * Cooler map markers
 
+## Frontend/mobile app development:
+(You need node.js)
+In `ui/` directory
+```
+cd ui
+npm install
 
-## Running the Server
+# pick a platform to develop on
+ionic platform add browser
+ionic platform add android
+ionic platform add ios
+
+# run local dev server
+ionic serve
+```
+
+
+## Running the backend server
 
 * Step 1: Install PostgreSQL, postGIS
 

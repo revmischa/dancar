@@ -16,6 +16,7 @@ var runSequence = require('run-sequence');
 var merge = require('merge-stream');
 var ripple = require('ripple-emulator');
 var wiredep = require('wiredep');
+var bower = require('gulp-bower');
 
 /**
  * Parse arguments
@@ -64,7 +65,7 @@ gulp.task('clean', function(done) {
 });
 
 // precompile .scss and concat with ionic.css
-gulp.task('styles', function() {
+gulp.task('styles', ['bower'], function() {
 
   var options = build ? { style: 'compressed' } : { style: 'expanded' };
 
@@ -138,7 +139,7 @@ gulp.task('scripts', function() {
 });
 
 // copy fonts
-gulp.task('fonts', function() {
+gulp.task('fonts', ['bower'], function() {
   return gulp
     .src(['app/fonts/*.*', 'bower_components/ionic/release/fonts/*.*'])
 
@@ -147,6 +148,9 @@ gulp.task('fonts', function() {
     .on('error', errorHandler);
 });
 
+gulp.task('bower', function() {
+  return bower();
+});
 
 // generate iconfont
 gulp.task('iconfont', function(){
@@ -187,7 +191,7 @@ gulp.task('jsHint', function(done) {
 });
 
 // concatenate and minify vendor sources
-gulp.task('vendor', function() {
+gulp.task('vendor', ['bower'], function() {
   var vendorFiles = wiredep().js;
 
   return gulp.src(vendorFiles)
