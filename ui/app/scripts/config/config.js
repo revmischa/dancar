@@ -1,8 +1,9 @@
 'use strict';
 
-angular.module('Dancar').config(function ($routeProvider) {
+angular.module('Dancar').config(function ($routeProvider, $httpProvider) {
   // register $http interceptors, if any. e.g.
   // $httpProvider.interceptors.push('interceptor-name');
+  $httpProvider.defaults.withCredentials = true;
 
   $routeProvider
     .when('/sign', {

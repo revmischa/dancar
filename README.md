@@ -42,14 +42,16 @@ In `ui/` directory
 ```
 cd ui
 npm install
+gulp  # serves up local app
 
-# pick a platform to develop on
-ionic platform add browser
+# (optional) pick a platform to develop on
 ionic platform add android
 ionic platform add ios
+ionic platform add osx
 
 # run local dev server
-ionic serve
+gulp
+ionic serve osx
 ```
 
 
