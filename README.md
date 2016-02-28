@@ -47,15 +47,17 @@ npm install
 gulp  # serves up local app
 
 # (optional) pick a platform to develop on
-ionic platform add android
-ionic platform add ios
-ionic platform add osx
+ionic platform android
+ionic platform ios
+ionic platform osx
 
 # run local dev server
 gulp
 # or
 ionic serve osx
 ```
+### Troubleshooting:
+If you upgrade node you need to reinstall your stuff. Do `npm cache clean` and reinstall ionic.
 
 
 ## Running the backend server
